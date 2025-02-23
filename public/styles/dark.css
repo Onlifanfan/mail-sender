@@ -16,17 +16,6 @@
     --border-color: rgba(255, 165, 0, 0.1);
 }
 
-body.light-mode {
-    --bg-color: #fff;
-    --text-color: #000;
-    --header-bg: rgba(0, 0, 0, 0.05);
-    --section-bg: rgba(0, 0, 0, 0.03);
-    --feature-bg: rgba(0, 0, 0, 0.03);
-    --pricing-bg: rgba(0, 0, 0, 0.03);
-    --input-bg: rgba(0, 0, 0, 0.03);
-    --border-color: rgba(0, 0, 0, 0.1);
-}
-
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
@@ -487,45 +476,79 @@ footer {
     }
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-    header {
-        text-align: center;
-        padding: 1rem 0;
-    }
-
-    #branding,
-    nav {
-        float: none;
-    }
-
-        nav ul li {
-            display: block;
-            margin: 1rem 0;
-        }
-
-    #showcase h1 {
-        font-size: 2.5rem;
-    }
-
-    .pricing-table,
-    .feature-list {
-        grid-template-columns: 1fr;
-    }
-
-    .section {
-        padding: 60px 0;
-    }
-
-        .section h2 {
-            font-size: 2rem;
-        }
+.dashboard-button {
+    display: none; /* Hidden by default */
+    background: linear-gradient(45deg, #ffa500, #ff4500); /* Orange gradient */
+    color: #000; /* Black text for contrast */
+    padding: 12px 30px; /* Adjust padding for a good button size */
+    text-align: center;
+    text-decoration: none;
+    font-size: 1rem; /* Match the nav link font size */
+    font-family: "Orbitron", sans-serif; /* Use the site's font */
+    text-transform: uppercase; /* Make it uppercase like the nav links */
+    letter-spacing: 1px; /* Add letter spacing */
+    border-radius: 5px; /* Slightly rounded corners */
+    border: none; /* Remove default border */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    position: relative;
+    overflow: hidden;
+    margin-top: 10px; /* Align with navigation */
 }
 
-/* Hover effects */
-a:hover,
-button:hover,
-input:hover,
-textarea:hover {
+    .dashboard-button:hover {
+        transform: translateY(-2px); /* Slight lift on hover */
+        box-shadow: 0 0 30px rgba(255, 165, 0, 0.5); /* Orange shadow on hover */
+        color: #000; /* Ensure text color stays consistent */
+    }
+
+    .dashboard-button::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transform: rotate(45deg);
+        animation: shine 3s infinite;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        header {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        #branding,
+        nav {
+            float: none;
+        }
+
+            nav ul li {
+                display: block;
+                margin: 1rem 0;
+            }
+
+        #showcase h1 {
+            font-size: 2.5rem;
+        }
+
+        .pricing-table,
+        .feature-list {
+            grid-template-columns: 1fr;
+        }
+
+        .section {
+            padding: 60px 0;
+        }
+
+            .section h2 {
+                font-size: 2rem;
+            }
+    }
+    /* Hover effects */
+    a: hover, button:hover, input:hover, textarea:hover {
     cursor: none;
 }
