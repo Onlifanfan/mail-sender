@@ -4,7 +4,28 @@ document.addEventListener('mousemove', (e) => {
     cursor.style.top = e.clientY + 'px';
 });
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
+        const dashboardButton = document.querySelector('.dashboard-button');
+
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('/api/check-login');
+                const data = await response.json();
+
+                if (data.loggedIn) {
+                    dashboardButton.style.display = 'inline-block';
+                    dashboardButton.href = '/dashboard';
+                } else {
+                    dashboardButton.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error checking login status:', error);
+            }
+        }
+
+        checkLoginStatus();
+
+
     const themeToggle = document.getElementById('theme-toggle');
     const themeStylesheet = document.getElementById('theme-stylesheet');
     const body = document.body;
