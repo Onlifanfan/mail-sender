@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Confirm Email</title>
+    <style>
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #fff;
+            text-align: center;
+            cursor: none; /* Hide default cursor */
+        }
+
+        .container {
+            max-width: 400px;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(255, 165, 0, 0.3);
+        }
+
+        h1 {
+            color: #ffa500;
+            margin-bottom: 20px;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        p {
+            margin: 15px 0;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .loader {
+            border: 4px solid #333;
+            border-top: 4px solid #ffa500;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin: 20px auto;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #resendEmailButton {
+            display: block;
+            margin: 20px 0;
+            padding: 12px 15px;
+            background-color: #ffa500;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: none;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #resendEmailButton:hover {
+            background-color: #ff8c00;
+            box-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
+        }
+
+        #emailInput {
+            display: block;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: transparent;
+            border: none;
+            border-bottom: 2px solid #ffa500;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 16px;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            cursor: none;  /* Hide cursor in input */
+        }
+
+        #emailInput:focus {
+            outline: none;
+            border-bottom-color: #ff8c00;
+        }
+
+        #secondaryButton {
+            margin: 15px 0;
+            display: block;
+            padding: 14px 15px;
+            border: 2px solid #ffa500;
+            background-color: transparent;
+            color: #ffa500;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: none;
+            transition: all 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #secondaryButton:hover {
+            background-color: rgba(255, 165, 0, 0.1);
+        }
+
+        #resendStatus {
+            margin-top: 10px;
+            color: #ff4500;
+        }
+
+        .decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .circle {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(45deg, #ffa500, #ff4500);
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+
+        .circle:nth-child(1) {
+            top: -150px;
+            left: -150px;
+        }
+
+        .circle:nth-child(2) {
+            bottom: -150px;
+            right: -150px;
+        }
+
+        .line {
+            position: absolute;
+            background-color: #ffa500;
+            opacity: 0.2;
+        }
+
+        .line1 {
+            width: 2px;
+            height: 100%;
+            left: 20%;
+            animation: line-animation 15s infinite linear;
+        }
+
+        .line2 {
+            width: 2px;
+            height: 100%;
+            right: 20%;
+            animation: line-animation 20s infinite linear reverse;
+        }
+
+        @keyframes line-animation {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        /* Custom mouse pointer */
+        .custom-mouse-pointer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 165, 0, 0.2);
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%); /* Center the pointer */
+            transition: transform 0.1s ease-out, width 0.3s, height 0.3s, background-color 0.3s; /* Smooth transition */
+            mix-blend-mode: difference;
+            transform-origin: center center;
+        }
+
+        .custom-mouse-pointer::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background-color: #ffa500;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: cursor-pulse 1.5s infinite;
+        }
+
+        .custom-mouse-pointer::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            border: 2px solid rgba(255, 165, 0, 0.7);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: cursor-rotate 3s linear infinite;
+        }
+
+        @keyframes cursor-pulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes cursor-rotate {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="decoration">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="line line1"></div>
+        <div class="line line2"></div>
+    </div>
+
+    <div class="container">
+        <h1>Confirm Your Email</h1>
+        <p>An email with a registration link has been sent to your address.
+        If you don't see the email, please check your spam folder.</p>
+        <div class="loader"></div>
+        <p>If you still don't see the confirmation email, please enter the email address you used to sign up, and we'll resend the email.</p>
+        <input type="email" id="emailInput" placeholder="Enter your email address" />
+        <button id="resendEmailButton">Resend Email</button>
+        <a id="secondaryButton" href="/login">I've already confirmed my email</a>
+        <div id="resendStatus"></div>
+    </div>
+
+    <!-- Custom Mouse Tracker -->
+    <div class="custom-mouse-pointer"></div>
+
+    <script>
+        document.addEventListener('mousemove', (e) => {
+            const tracker = document.querySelector('.custom-mouse-pointer');
+            tracker.style.transform = `translate(${e.clientX - 20}px, ${e.clientY - 20}px)`;
+        });
+
+        document.getElementById('resendEmailButton').addEventListener('click', async () => {
+            try {
+                const emailInput = document.getElementById('emailInput');
+                const email = emailInput.value.trim();
+
+                if (!email) {
+                    alert('Please enter your email address.');
+                    return;
+                }
+
+                const response = await fetch('/resend-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ emails: [email] }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(result.message);
+                    emailInput.value = '';  // Clear the input field after success
+                } else {
+                    throw new Error(result.error || 'An error occurred. Please try again later.');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('resendStatus').innerText = error.message;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Register</title>
+    <link rel="stylesheet" href="/styles/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-box login-form">
+                <h2>Login</h2>
+                <form id="loginForm" name="loginForm" autocomplete="off">
+                    <div class="input-group">
+                        <input type="email" id="loginEmail" required autocomplete="new-password">
+                        <label for="loginEmail">Email</label>
+                        <div class="line"></div>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="loginPassword" required autocomplete="new-password">
+                        <label for="loginPassword">Password</label>
+                        <div class="line"></div>
+                    </div>
+                    <button type="submit" class="submit-btn">Login</button>
+                    <button type="button" class="google-login-btn" onclick="window.location.href='/auth/google'">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" class="google-logo">
+                        <span>Sign in with Google</span>
+                    </button>
+                </form>
+                <p class="switch-text">Don't have an account? <a href="#" id="switchToRegister">Register</a></p>
+            </div>
+            <div class="form-box register-form">
+                <h2>Register</h2>
+                <form id="registerForm">
+                    <div class="input-group">
+                        <input type="text" id="registerName" required>
+                        <label for="registerName">Name</label>
+                        <div class="line"></div>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" id="registerEmail" required>
+                        <label for="registerEmail">Email</label>
+                        <div class="line"></div>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="registerPassword" required>
+                        <label for="registerPassword">Password</label>
+                        <div class="line"></div>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="confirmPassword" required>
+                        <label for="confirmPassword">Confirm Password</label>
+                        <div class="line"></div>
+                    </div>
+                    <button type="submit" class="submit-btn">Register</button>
+                    <button type="button" class="google-login-btn" onclick="window.location.href='/auth/google'">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" class="google-logo">
+                        <span>Register with Google</span>
+                    </button>
+                </form>
+                <p class="switch-text">Already have an account? <a href="#" id="switchToLogin">Login</a></p>
+            </div>
+        </div>
+        <div class="decoration">
+            <div class="circle"></div>
+            <div class="line line1"></div>
+            <div class="line line2"></div>
+            <div class="line line3"></div>
+        </div>
+    </div>
+    <script src="/scripts/login.js"></script>
+</body>
+</html>
