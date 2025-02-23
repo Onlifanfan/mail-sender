@@ -52,7 +52,7 @@ app.use(cors({
 
 // Session setup
 app.use(session({
-    secret: process.env.EMAIL_SECRET || 'your-secret-key',
+    secret: process.env.SECRET || 'your-secret-key',
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
@@ -359,6 +359,7 @@ app.post('/api/login', async (req, res) => {
             return res.status(401).json({ error: 'Confirm your email to continue' });
         }
         req.session.email = user.email;
+        await req.session.save();
         res.json({ message: 'Login successful', redirect: '/dashboard' });
     } catch (error) {
         console.error('Login error:', error);
