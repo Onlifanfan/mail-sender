@@ -1,4 +1,4 @@
-﻿const dotenv = require('dotenv');
+const dotenv = require('dotenv');
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
@@ -14,7 +14,7 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
-    secure: process.env.EMAIL_PORT === '587',
+    secure: process.env.EMAIL_PORT === '465',
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -30,9 +30,6 @@ const cors = require('cors');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 
-// Routes
-const routes = require('./routes');
-app.use('/', routes);
 
 // Middleware to serve static files from the public folder
 app.use(express.static('public'));
@@ -53,7 +50,7 @@ app.use(cors({
     credentials: true // Allow cookies and credentials
 }));
 
-// Session setup 
+// Session setup
 app.use(session({
     secret: process.env.EMAIL_SECRET || 'your-secret-key',
     resave: false,
@@ -72,7 +69,7 @@ app.use(session({
     }
 }));
 
-// Encryption setup 
+// Encryption setup
 const ENCRYPTION_KEY = process.env.SECRET;
 const IV_LENGTH = 16;
 
@@ -125,7 +122,7 @@ passport.use(
                     });
                     await user.save();
                 }
-                return done(null, user.username); // Pass user email for session
+                return done(null, user.email); // Pass user email for session
             } catch (error) {
                 console.error("Google login error:", error);
                 return done(error, null);
@@ -135,13 +132,13 @@ passport.use(
 );
 
 
-passport.serializeUser((userId, done) => {
-    done(null, userId); // Store only the user ID in the session
+passport.serializeUser((email, done) => {
+    done(null, email); // Store only the user email in the session
 });
 
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser(async (email, done) => {
     try {
-        const user = await User.findOne({ username : id });
+        const user = await User.findOne({ email: email });
         if (!user) {
             console.error("Failed to deserialize user: User not found");
             return done(null, false);
@@ -165,9 +162,9 @@ app.get(
     async (req, res) => {
         try {
             if (req.user) {
-                req.session.username = req.user; // Save the username to the session
+                req.session.email = req.user; // Save the email to the session
                 await req.session.save(); // Ensure the session is saved
-                res.redirect("/"); // Redirect to the homepage
+                res.redirect("/dashboard"); // Redirect to the homepage
             } else {
                 console.error("Authentication failed: req.user is undefined or login denied.");
                 res.redirect("/error"); // Redirect to an error page
@@ -208,7 +205,7 @@ app.post('/api/register', async (req, res) => {
 
         // Generate email token
         const emailToken = jwt.sign(
-            { username }, // Store username instead of user object
+            { email }, // Store email instead of user object
             process.env.SECRET,
             { expiresIn: '1d' }
         );
@@ -252,14 +249,13 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-
 app.get('/confirmation/:token', async (req, res) => {
     try {
         // Verify token
-        const { username } = jwt.verify(req.params.token, process.env.SECRET);
+        const { email } = jwt.verify(req.params.token, process.env.SECRET);
 
         // Check if the user exists
-        User.findOne({ name: username })
+        User.findOne({ email: email })
             .then(present => {
                 if (present == null) {
                     return res.status(400).send('Invalid or expired token.');
@@ -295,10 +291,9 @@ app.post('/resend-email', async (req, res) => {
                     return res.status(400).json({ error: 'Email address not found or already confirmed.' });
                 }
 
-                username = present.name;
                 // Generate email token
                 const emailToken = jwt.sign(
-                    { username },
+                    { email },
                     process.env.SECRET,
                     { expiresIn: '1d' }
                 );
@@ -327,7 +322,8 @@ app.post('/resend-email', async (req, res) => {
     <p>S poštovanjem,</p>
     <p><strong>Stat&Mat</strong></p>
 </div>
-`,              });
+`,
+                });
 
                 res.json({
                     message: 'Confirmation email has been resent.',
@@ -344,14 +340,14 @@ app.post('/resend-email', async (req, res) => {
 
 app.post('/api/login', async (req, res) => {
     try {
-        const { userInput, password, deviceId } = req.body;
+        const { userInput, password } = req.body;
 
         // Validation
         if (!userInput || !password) {
             return res.status(400).json({ error: 'All fields are required' });
         }
 
-        const user = await User.findOne({email: userInput });
+        const user = await User.findOne({ email: userInput });
 
         if (!user) {
             return res.status(401).json({ error: 'Wrong email address' });
@@ -362,24 +358,13 @@ app.post('/api/login', async (req, res) => {
         if (!user.isConfirmed) {
             return res.status(401).json({ error: 'Confirm your email to continue' });
         }
-        req.session.username = user.username;
+        req.session.email = user.email;
         res.json({ message: 'Login successful', redirect: '/dashboard' });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ error: 'Server error' });
     }
 });
-
-            
-// Middleware to ensure user is logged in
-function ensureLoggedIn(req, res, next) {
-    if (req.session && req.session.username) {
-        return next(); // User is logged in, proceed to the next middleware/route handler
-    } else {
-        res.redirect('/login'); // Redirect to login page if not authenticated
-    }
-}
-
 
 // Logout route to destroy the session
 app.post('/api/logout', (req, res) => {
@@ -400,11 +385,89 @@ app.post('/api/logout', (req, res) => {
 });
 
 app.get('/api/check-login', async (req, res) => {
-    if (req.session.username) {
+    if (req.session.email) {
+        const user = await User.findOne({ email: req.session.email });
+        if (!user) {
+            return res.status(401).json({ loggedIn: false });
+        }
         return res.status(200).json({
             loggedIn: true,
-            username: req.session.username
+            username: user.username
         });
     }
     res.status(401).json({ loggedIn: false });
 });
+
+app.post('/api/setCampaignData', async (req, res) => {
+    try {
+        if (!req.session.email) {
+            return res.status(401).json({ error: 'User not logged in' });
+        }
+
+        const { campaignName, businessName, industry, targetAudience, language, followUpCount } = req.body;
+
+        const user = await User.findOne({ email: req.session.email });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const newCampaign = {
+            campaignName,
+            businessName,
+            industry: industry,
+            numberOfFollowUps: followUpCount,
+            targetAudience,
+            language,
+            creationDate: new Date()
+        };
+
+        user.campaigns.push(newCampaign);
+        await user.save();
+
+        res.status(200).json({ message: 'Campaign data saved successfully' });
+    } catch (error) {
+        console.error('Error saving campaign data:', error);
+        res.status(500).json({ error: 'An error occurred while saving the campaign data' });
+    }
+});
+
+app.get('/api/getCampaignData', async (req, res) => {
+    try {
+        // Check if the user is logged in
+        if (!req.session.email) {
+            return res.status(401).json({ error: 'User not logged in' });
+        }
+
+        // Find the user
+        const user = await User.findOne({ email: req.session.email });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Return the campaigns data
+        res.status(200).json({
+            campaigns: user.campaigns,
+            totalCampaigns: user.campaigns.length
+        });
+
+    } catch (error) {
+        console.error('Error fetching campaign data:', error);
+        res.status(500).json({ error: 'An error occurred while fetching campaign data' });
+    }
+});
+
+// Middleware to ensure user is logged in
+module.exports = {
+    ensureLoggedIn: function (req, res, next) {
+        if (req.session && req.session.email) {
+            return next();
+        } else {
+            res.redirect('/login');
+        }
+    }
+};
+
+// Routes
+const routes = require('./routes');
+app.use('/', routes);
