@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ColdAI Dashboard</title>
+    <link rel="stylesheet" href="/styles/dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">ColdAI</div>
+            <ul>
+                <li>
+                    <a href="#" data-section="dashboard" class="nav-link active">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="campaigns" class="nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="6" x2="20" y2="6" /><line x1="4" y1="18" x2="20" y2="18" /></svg>
+                        Campaigns
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="analytics" class="nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18" /><path d="M18 17V9" /><path d="M13 17V5" /><path d="M8 17v-3" /></svg>
+                        Analytics
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-section="settings" class="nav-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></svg>
+                        Settings
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="content">
+            <header>
+                <h1>Welcome, <span id="userName">User</span></h1>
+                <button id="newCampaignBtn" class="btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
+                    New Campaign
+                </button>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <h2>Campaign Overview</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Sent</h3>
+                        <p id="totalSent">1,234</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Open Rate</h3>
+                        <p id="openRate">45%</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Reply Rate</h3>
+                        <p id="replyRate">15%</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Meetings Booked</h3>
+                        <p id="meetingsBooked">8</p>
+                    </div>
+                </div>
+                <div class="recent-activity">
+                    <h3>Recent Activity</h3>
+                    <ul id="activityList">
+                        <li>New campaign "Product Launch" created</li>
+                        <li>5 new replies received</li>
+                        <li>2 meetings scheduled for next week</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Campaigns Section -->
+            <section id="campaigns" class="section hidden">
+                <h2>Campaigns</h2>
+                <div id="campaignsList" class="campaigns-grid">
+                    <!-- Campaigns will be dynamically inserted here -->
+                </div>
+            </section>
+
+            <!-- New Campaign Form Section -->
+            <section id="newCampaign" class="section hidden">
+                <h2>Create New Campaign</h2>
+                <form id="campaignForm">
+                    <div class="form-group">
+                        <label for="campaignName">Campaign Name</label>
+                        <input type="text" id="campaignName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="businessName">Business Name</label>
+                        <input type="text" id="businessName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="targetAudience">Target Audience</label>
+                        <textarea id="targetAudience" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="language">Language</label>
+                        <select id="language" name="language" required>
+                            <option value="">Select a language</option>
+                            <option value="ar">Arabic (العربية)</option>
+                            <option value="bn">Bengali (বাংলা)</option>
+                            <option value="zh">Chinese (中文)</option>
+                            <option value="hr">Croatian (Hrvatski)</option>
+                            <option value="da">Danish (Dansk)</option>
+                            <option value="nl">Dutch (Nederlands)</option>
+                            <option value="en">English</option>
+                            <option value="fi">Finnish (Suomi)</option>
+                            <option value="fr">French (Français)</option>
+                            <option value="de">German (Deutsch)</option>
+                            <option value="el">Greek (Ελληνικά)</option>
+                            <option value="he">Hebrew (עברית)</option>
+                            <option value="hi">Hindi (हिन्दी)</option>
+                            <option value="hu">Hungarian (Magyar)</option>
+                            <option value="id">Indonesian (Bahasa Indonesia)</option>
+                            <option value="it">Italian (Italiano)</option>
+                            <option value="ja">Japanese (日本語)</option>
+                            <option value="ko">Korean (한국어)</option>
+                            <option value="ms">Malay (Bahasa Melayu)</option>
+                            <option value="no">Norwegian (Norsk)</option>
+                            <option value="pl">Polish (Polski)</option>
+                            <option value="pt">Portuguese (Português)</option>
+                            <option value="ro">Romanian (Română)</option>
+                            <option value="ru">Russian (Русский)</option>
+                            <option value="rs">Serbian (Srpski)</option>
+                            <option value="es">Spanish (Español)</option>
+                            <option value="sv">Swedish (Svenska)</option>
+                            <option value="th">Thai (ไทย)</option>
+                            <option value="tr">Turkish (Türkçe)</option>
+                            <option value="uk">Ukrainian (Українська)</option>
+                            <option value="ur">Urdu (اردو)</option>
+                            <option value="vi">Vietnamese (Tiếng Việt)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="followUpCount">Number of Follow-ups</label>
+                        <input type="number" id="followUpCount" min="0" max="5" value="1" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Create Campaign</button>
+                </form>
+            </section>
+        </main>
+    </div>
+    <script src="/scripts/dashboard.js"></script>
+</body>
+</html>
