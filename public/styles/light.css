@@ -492,6 +492,45 @@ footer {
     }
 }
 
+.dashboard-button {
+    display: none; /* Hidden by default */
+    padding: 10px 20px;
+    background: none;
+    color: #6366f1; /* Same as Highlight */
+    text-decoration: none;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: none; /* Removes the default cursor */
+    font-family: "Orbitron", sans-serif;
+    font-weight: normal; /* Regular font weight */
+}
+
+    .dashboard-button:hover {
+        color: #6366f1;
+        text-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+        transform: translateY(-2px);
+        cursor: none;
+    }
+
+    .dashboard-button::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: -5px;
+        left: 0;
+        background-color: #6366f1;
+        transition: width 0.3s ease;
+    }
+
+    .dashboard-button:hover::after {
+        width: 100%;
+    }
+
+
 /* Responsive design */
 @media (max-width: 768px) {
     header {
