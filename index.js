@@ -1,118 +1,139 @@
-const dotenv = require('dotenv');
+// app.js - Rewritten for Enhanced Session Management and Cookie Security
+
+// Load environment variables from .env file (if present)
 require('dotenv').config();
+
 const express = require('express');
 const session = require('express-session');
-const app = express();
-dotenv.config();
-
-const crypto = require('crypto');
-
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const passport = require('passport');
-
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const nodemailer = require('nodemailer');
-const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    secure: process.env.EMAIL_PORT === '465',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    },
-});
-
 const MongoStore = require('connect-mongo');
 const mongoose = require('mongoose');
-const User = require('./models/user');
-
-const axios = require('axios');
 const cors = require('cors');
 const path = require('path');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');  // For encryption
+const User = require('./models/user'); // Import your User model
 
+const app = express();
 
-// Middleware to serve static files from the public folder
-app.use(express.static('public'));
+// --------------------------------------------------------------------------
+// 1. Environment Configuration (CRUCIAL)
+// --------------------------------------------------------------------------
+
+// Log environment variables EARLY to verify they are set correctly
+console.log("Starting app.js"); // First line of defense
+
+// Set the port based on environment variable, default to 3000 if not set
 const PORT = process.env.PORT || 3000;
+console.log("PORT:", PORT);
 
-const mongoURI = `${process.env.MONGODB_URI}`;
+// Check NODE_ENV (important for cookie security)
+const NODE_ENV = process.env.NODE_ENV;
+console.log("NODE_ENV:", NODE_ENV);
+const IS_PRODUCTION = NODE_ENV === 'production'; // Boolean for easy checks
+
+// Set the base URL, used for redirects and email confirmations
+const BASE_URL = process.env.BASE_URL;
+console.log("BASE_URL:", BASE_URL);
+
+// --------------------------------------------------------------------------
+// 2. Database Configuration
+// --------------------------------------------------------------------------
+
+const mongoURI = process.env.MONGODB_URI; // Get MongoDB URI from env
+console.log("MongoDB URI:", mongoURI);
+
 mongoose.connect(mongoURI)
-    .then(() => app.listen(PORT, () => console.log('Server started')))
-    .catch((err) => console.log(err));
+    .then(() => {
+        console.log('MongoDB connected successfully');
+        app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+    })
+    .catch(err => {
+        console.error('MongoDB connection error:', err);
+        console.error('Make sure MongoDB is running and the URI is correct!');
+        process.exit(1); // Exit if the database connection fails (critical)
+    });
 
-// Middleware
+// --------------------------------------------------------------------------
+// 3. Middleware Configuration
+// --------------------------------------------------------------------------
+
+// Trust proxy (required if behind a reverse proxy like Nginx or Heroku)
+// This is *essential* for proper cookie handling in production
+app.set('trust proxy', 1); // Trust first proxy
+
+// Serve static files from the 'public' directory
+app.use(express.static('public'));
+
+// Parse JSON and URL-encoded request bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Allow requests from your frontend domain
-app.use(cors({
-    origin: '*',  // Allow all origins
-    credentials: true // Allow cookies and credentials
-}));
+// CORS configuration (Important for cross-origin requests)
+const corsOptions = {
+    origin: IS_PRODUCTION ? process.env.FRONTEND_URL : '*', // Production: specific origin, Development: allow all
+    credentials: true,             // Allow cookies to be sent
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Specify allowed HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
+    optionsSuccessStatus: 204       // Some legacy browsers choke on 204
+};
+console.log("CORS Options:", corsOptions);  // Log the CORS config
+app.use(cors(corsOptions));
 
-// Session setup
-app.use(session({
-    secret: process.env.SECRET || 'your-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: mongoURI,
-        collectionName: 'sessions',
-        ttl: 14 * 24 * 60 * 60, // 14 days
-        autoRemove: 'native',
+// --------------------------------------------------------------------------
+// 4. Session Configuration (Critical for Cookie Management)
+// --------------------------------------------------------------------------
+
+const sessionSecret = process.env.SESSION_SECRET || 'your-default-secret';
+console.log("Session Secret Source:", sessionSecret === 'your-default-secret' ? 'DEFAULT' : 'Environment Variable');
+
+const sessionConfig = {
+    secret: sessionSecret,                // Use a strong, randomly generated secret
+    resave: false,                           // Don't save session if unmodified
+    saveUninitialized: false,              // Don't create session until something stored
+    store: MongoStore.create({               // Store session data in MongoDB
+        mongoUrl: mongoURI,               // MongoDB connection URI
+        collectionName: 'sessions',         // Collection name for sessions
+        ttl: 14 * 24 * 60 * 60,           // Session TTL (14 days)
+        autoRemove: 'native',            // Automatically remove expired sessions
     }),
     cookie: {
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000 // 1 day
+        secure: IS_PRODUCTION,               // Only send over HTTPS in production
+        httpOnly: true,                  // Cookie cannot be accessed by client-side JavaScript
+        sameSite: 'lax',                   // Control cross-site cookie behavior
+        maxAge: 24 * 60 * 60 * 1000        // Session duration (1 day)
     }
-}));
-
-// Encryption setup
-const ENCRYPTION_KEY = process.env.SECRET;
-const IV_LENGTH = 16;
-
-// Function to encrypt data
-const encrypt = (text) => {
-    const iv = crypto.randomBytes(IV_LENGTH);
-    const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);
-    let encrypted = cipher.update(text);
-    encrypted = Buffer.concat([encrypted, cipher.final()]);
-    return iv.toString('hex') + ':' + encrypted.toString('hex');
 };
+console.log("Session Configuration:", sessionConfig); // Log session config
 
-// Function to decrypt data
-const decrypt = (text) => {
-    const textParts = text.split(':');
-    const iv = Buffer.from(textParts.shift(), 'hex');
-    const encryptedText = Buffer.from(textParts.join(':'), 'hex');
-    const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);
-    let decrypted = decipher.update(encryptedText);
-    decrypted = Buffer.concat([decrypted, decipher.final()]);
-    return decrypted.toString();
-};
+app.use(session(sessionConfig)); // Apply session middleware
+
+// --------------------------------------------------------------------------
+// 5. Passport Configuration (Authentication)
+// --------------------------------------------------------------------------
 
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Google Authentication Strategy
 passport.use(
     new GoogleStrategy(
         {
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: `${process.env.BASE_URL}/auth/google/callback`,
+            callbackURL: `${BASE_URL}/auth/google/callback`,
             passReqToCallback: true,
         },
         async (req, accessToken, refreshToken, profile, done) => {
             try {
-                const email = profile.emails[0].value; // Extract user's email
+                const email = profile.emails[0].value;
                 const username = profile.name.givenName;
 
                 let user = await User.findOne({ email: email });
 
                 if (!user) {
-                    // Create a new user if not found
                     user = new User({
                         username: username,
                         email: email,
@@ -122,7 +143,9 @@ passport.use(
                     });
                     await user.save();
                 }
-                return done(null, user.email); // Pass user email for session
+
+                // Store the *user object* (or minimal data like ID) in the session
+                return done(null, user); // Pass the full user object for session
             } catch (error) {
                 console.error("Google login error:", error);
                 return done(error, null);
@@ -131,17 +154,18 @@ passport.use(
     )
 );
 
-
-passport.serializeUser((email, done) => {
-    done(null, email); // Store only the user email in the session
+passport.serializeUser((user, done) => {
+    console.log("Serializing user:", user.email);
+    done(null, user.email); // Store only the user ID or essential info
 });
 
 passport.deserializeUser(async (email, done) => {
     try {
+        console.log("Deserializing user:", email);
         const user = await User.findOne({ email: email });
         if (!user) {
             console.error("Failed to deserialize user: User not found");
-            return done(null, false);
+            return done(null, false); // Indicate user not found
         }
         return done(null, user); // Pass the full user object
     } catch (error) {
@@ -149,6 +173,10 @@ passport.deserializeUser(async (email, done) => {
         done(error, null);
     }
 });
+
+// --------------------------------------------------------------------------
+// 6. Authentication Routes
+// --------------------------------------------------------------------------
 
 // Google Authentication Initiation
 app.get(
@@ -161,20 +189,35 @@ app.get(
     passport.authenticate("google", { failureRedirect: "/login" }),
     async (req, res) => {
         try {
+            console.log("Google callback triggered");
+            console.log("req.user:", req.user); // Log the user object
+            console.log("req.session:", req.session); // Log the session object
+            console.log("req.sessionID:", req.sessionID); //Log the Session Id object
+
+            //Check if the user is already logged in based on information stored in the session.
             if (req.user) {
-                req.session.email = req.user; // Save the email to the session
-                await req.session.save(); // Ensure the session is saved
-                res.redirect("/dashboard"); // Redirect to the homepage
+                console.log("User authenticated, setting session...");
+                req.session.email = req.user.email; // Access email from user object
+                console.log("Session email is:" + req.session.email);
+
+                await req.session.save(); // Save the session
+
+                console.log("Session saved, redirecting to dashboard...");
+                res.redirect("/dashboard");
             } else {
                 console.error("Authentication failed: req.user is undefined or login denied.");
-                res.redirect("/error"); // Redirect to an error page
+                res.redirect("/error");
             }
         } catch (error) {
             console.error("Error during Google auth callback:", error);
-            res.redirect("/error"); // Redirect to an error page
+            res.redirect("/error");
         }
     }
 );
+
+// --------------------------------------------------------------------------
+// 7. Other Routes (Registration, Login, Logout, etc.)
+// --------------------------------------------------------------------------
 
 // Register
 app.post('/api/register', async (req, res) => {
@@ -189,7 +232,7 @@ app.post('/api/register', async (req, res) => {
         // Check if email is already in use
         const emailExists = await User.findOne({ email });
         if (emailExists) {
-            return res.status(400).json({ error: 'Email vec postoji' });
+            return res.status(400).json({ error: 'Email already exists' });
         }
 
         // Store username and device information
@@ -206,35 +249,35 @@ app.post('/api/register', async (req, res) => {
         // Generate email token
         const emailToken = jwt.sign(
             { email }, // Store email instead of user object
-            process.env.SECRET,
+            process.env.SESSION_SECRET, // Use session secret for token
             { expiresIn: '1d' }
         );
 
-        const url = `${process.env.BASE_URL}/confirmation/${emailToken}`;
+        const url = `${BASE_URL}/confirmation/${emailToken}`;
 
         // Send confirmation email
         transporter.sendMail({
             from: '"Mail-sender" <your-email@gmail.com>',
             to: email,
-            subject: 'Potvrda e-mail adrese',
+            subject: 'Email address confirmation',
             html: `
-<div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-    <div style="text-align: center; margin-bottom: 20px;">
-        <img src="cid:logo" style="max-width: 150px;">
-    </div>
-    <h2 style="text-align: center; color: #007bff;">Potvrdite svoju e-mail adresu</h2>
-    <p>Poštovani,</p>
-    <p>Hvala što ste se registrirali! Kako bismo dovršili postupak registracije, molimo Vas da potvrdite svoju e-mail adresu klikom na donji gumb:</p>
-    <div style="text-align: center; margin: 20px 0;">
-        <a href="${url}" style="background-color: #007bff; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">Potvrdi e-mail</a>
-    </div>
-    <p>Ako ne možete kliknuti na gumb, kopirajte i zalijepite sljedeći link u svoj preglednik:</p>
-    <p style="word-break: break-word; text-align: center; color: #555;">${url}</p>
-    <p>Za dodatne informacije slobodno nas kontaktirajte.</p>
-    <p>S poštovanjem,</p>
-    <p><strong>Stat&Mat</strong></p>
-</div>
-`,
+            <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <img src="cid:logo" style="max-width: 150px;">
+                </div>
+                <h2 style="text-align: center; color: #007bff;">Confirm your email address</h2>
+                <p>Dear,</p>
+                <p>Thank you for registering! To complete the registration process, please confirm your email address by clicking the button below:</p>
+                <div style="text-align: center; margin: 20px 0;">
+                    <a href="${url}" style="background-color: #007bff; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">Confirm email</a>
+                </div>
+                <p>If you cannot click the button, copy and paste the following link into your browser:</p>
+                <p style="word-break: break-word; text-align: center; color: #555;">${url}</p>
+                <p>For further information, please contact us.</p>
+                <p>Sincerely,</p>
+                <p><strong>Stat&Mat</strong></p>
+            </div>
+            `,
         });
 
         // Send JSON response
@@ -252,7 +295,7 @@ app.post('/api/register', async (req, res) => {
 app.get('/confirmation/:token', async (req, res) => {
     try {
         // Verify token
-        const { email } = jwt.verify(req.params.token, process.env.SECRET);
+        const { email } = jwt.verify(req.params.token, process.env.SESSION_SECRET);
 
         // Check if the user exists
         User.findOne({ email: email })
@@ -262,10 +305,10 @@ app.get('/confirmation/:token', async (req, res) => {
                 }
                 present.isConfirmed = true;
                 present.save();
-                res.redirect(`${process.env.BASE_URL}/login`);
+                res.redirect(`${BASE_URL}/login`);
             })
             .catch(err => {
-                console.error('Email confirmation error:', error);
+                console.error('Email confirmation error:', err);
                 res.status(400).send('Invalid or expired token.');
             });
 
@@ -294,35 +337,35 @@ app.post('/resend-email', async (req, res) => {
                 // Generate email token
                 const emailToken = jwt.sign(
                     { email },
-                    process.env.SECRET,
+                    process.env.SESSION_SECRET,
                     { expiresIn: '1d' }
                 );
 
-                const url = `${process.env.BASE_URL}/confirmation/${emailToken}`;
+                const url = `${BASE_URL}/confirmation/${emailToken}`;
 
                 // Send confirmation email
                 transporter.sendMail({
                     from: '"Mail-sender" <your-email@gmail.com>',
                     to: email,
-                    subject: 'Potvrda e-mail adrese',
+                    subject: 'Email address confirmation',
                     html: `
-<div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-    <div style="text-align: center; margin-bottom: 20px;">
-        <img src="cid:logo" style="max-width: 150px;">
-    </div>
-    <h2 style="text-align: center; color: #007bff;">Potvrdite svoju e-mail adresu</h2>
-    <p>Poštovani,</p>
-    <p>Hvala što ste se registrirali! Kako bismo dovršili postupak registracije, molimo Vas da potvrdite svoju e-mail adresu klikom na donji gumb:</p>
-    <div style="text-align: center; margin: 20px 0;">
-        <a href="${url}" style="background-color: #007bff; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">Potvrdi e-mail</a>
-    </div>
-    <p>Ako ne možete kliknuti na gumb, kopirajte i zalijepite sljedeći link u svoj preglednik:</p>
-    <p style="word-break: break-word; text-align: center; color: #555;">${url}</p>
-    <p>Za dodatne informacije slobodno nas kontaktirajte.</p>
-    <p>S poštovanjem,</p>
-    <p><strong>Stat&Mat</strong></p>
-</div>
-`,
+            <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <img src="cid:logo" style="max-width: 150px;">
+                </div>
+                <h2 style="text-align: center; color: #007bff;">Confirm your email address</h2>
+                <p>Dear,</p>
+                <p>Thank you for registering! To complete the registration process, please confirm your email address by clicking the button below:</p>
+                <div style="text-align: center; margin: 20px 0;">
+                    <a href="${url}" style="background-color: #007bff; color: white; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">Confirm email</a>
+                </div>
+                <p>If you cannot click the button, copy and paste the following link into your browser:</p>
+                <p style="word-break: break-word; text-align: center; color: #555;">${url}</p>
+                <p>For further information, please contact us.</p>
+                <p>Sincerely,</p>
+                <p><strong>Stat&Mat</strong></p>
+            </div>
+            `,
                 });
 
                 res.json({
@@ -336,7 +379,6 @@ app.post('/resend-email', async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 });
-
 
 app.post('/api/login', async (req, res) => {
     try {
@@ -470,5 +512,15 @@ module.exports = {
 };
 
 // Routes
-const routes = require('./routes');
+const routes = require('./routes'); // Import your routes
 app.use('/', routes);
+
+// --------------------------------------------------------------------------
+// 8. Error Handling (Basic)
+// --------------------------------------------------------------------------
+
+// Add a generic error handler to catch any unhandled exceptions
+app.use((err, req, res, next) => {
+    console.error("Unhandled error:", err);
+    res.status(500).send("Internal Server Error");
+});
