@@ -36,6 +36,23 @@ body.dark-mode {
     --pointer-outer: rgba(99, 102, 241, 0.7);
 }
 
+.logout-button {
+    display: inline-flex;
+    align-items: center;
+    color: inherit; /* Inherit the text color from the parent */
+    text-decoration: none; /* Remove underline */
+    background: none;       /* Remove background */
+    border: none;           /* Remove border */
+    padding: 0;             /* Remove padding */
+    font-size: inherit;     /* Inherit font size */
+    cursor: pointer;        /* Change cursor to a pointer on hover */
+}
+
+.logout-button:hover {
+    color: #007bff;         /* Optional: Add a subtle color change on hover to indicate it's clickable */
+}
+
+
 body {
     font-family: "Orbitron", sans-serif;
     background-color: var(--bg-color);
