@@ -6,6 +6,9 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: false },
     registrationDate: { type: Date, required: false },
     isConfirmed: { type: Boolean, required: true },
+    accessToken: { type: String, required: true },
+    refreshToken: { type: String, required: true },
+    tokenExpiration: { type: Date, required: true },
     campaigns: [{
             campaignName: { type: String, required: true },
             businessName: { type: String, required: true },
