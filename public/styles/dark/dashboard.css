@@ -79,6 +79,20 @@ body {
     padding: 2rem;
 }
 
+#logout-link {
+    color: inherit;         /* Inherit color from parent element */
+    text-decoration: none;  /* Remove underline */
+    display: flex;          /* Use flexbox */
+    align-items: center;    /* Vertically align */
+    padding: 0.5rem 1rem;    /* Match padding */
+}
+
+#logout-link svg {
+    margin-right: 0.75rem; /* Match spacing between icon and text */
+    fill: currentColor;     /* Ensure the icon inherits the text color */
+}
+
+
 header {
     display: flex;
     align-items: center;
@@ -93,21 +107,20 @@ header {
 
 /* Style for New Campaign Button */
 #newCampaignBtn {
-    padding: 10px 20px; /* Adjust padding as needed */
-    font-size: 1.5em; /* Adjust font size as needed */
+    padding: 10px 20px;  /* Adjust padding as needed */
+    font-size: 1.5em;     /* Adjust font size as needed */
 }
 
 /* Style for theme-toggle Button */
 #theme-toggle {
-    font-size: 2.5em; /* Adjust the font size */
-    border: none; /* Remove the border */
+    font-size: 2.5em;  /* Adjust the font size */
+    border: none;       /* Remove the border */
     background-color: transparent; /* Make the background transparent */
-    cursor: pointer; /* Add a pointer on hover */
-    outline: none; /* Remove the outline on focus */
+    cursor: pointer;    /* Add a pointer on hover */
+    outline: none;     /* Remove the outline on focus */
     /* Add padding and height to align */
-    padding: 10px 20px; /* Adjust the values until they match */
+    padding: 10px 20px;     /* Adjust the values until they match */
 }
-
 h1 {
     font-size: 1.875rem;
     font-weight: bold;
@@ -327,7 +340,6 @@ textarea {
         text-align: center;
     }
 }
-
 .form-group select {
     width: 100%;
     padding: 0.75rem;
