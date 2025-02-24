@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeStylesheet = document.getElementById('theme-stylesheet');
     const body = document.body;
 
-    const themes = ['styles/loginl.css', 'styles/login.css'];
+    const themes = ['styles/light/loginl.css', 'styles/dark/login.css'];
     let currentThemeIndex = 0;
 
     // Function to set the theme
