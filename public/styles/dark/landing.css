@@ -16,6 +16,24 @@
     --border-color: rgba(255, 165, 0, 0.1);
 }
 
+.logout-button {
+    display: inline-flex;
+    align-items: center;
+    color: inherit; /* Inherit the text color from the parent */
+    text-decoration: none; /* Remove underline */
+    background: none;       /* Remove background */
+    border: none;           /* Remove border */
+    padding: 0;             /* Remove padding */
+    font-size: inherit;     /* Inherit font size */
+    cursor: pointer;        /* Change cursor to a pointer on hover */
+}
+
+.logout-button:hover {
+    color: #007bff;         /* Optional: Add a subtle color change on hover to indicate it's clickable */
+}
+
+
+
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
@@ -74,13 +92,34 @@ header {
     animation: glow 2s ease-in-out infinite alternate;
 }
 
+/* Style the Logout button (from previous responses) */
+.logout-button {
+    display: inline-flex;
+    align-items: center;
+    color: inherit;
+    text-decoration: none;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    color: #007bff; /* Optional hover color */
+}
+
 nav {
     float: right;
     margin-top: 10px;
+    display:flex;
+    align-items: center; /* Vertically center content */
+    justify-content: space-between;
 }
 
     nav ul {
         list-style: none;
+        display: flex;
     }
 
         nav ul li {
@@ -549,6 +588,6 @@ footer {
             }
     }
     /* Hover effects */
-    a: hover, button:hover, input:hover, textarea:hover {
+    a:hover, button:hover, input:hover, textarea:hover {
     cursor: none;
 }
