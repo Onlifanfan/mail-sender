@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login/Register</title>
-    <link rel="stylesheet" href="/styles/login.css">
+    <link rel="stylesheet" href="/styles/loginl.css" id="theme-stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    
     <div class="container">
+        <button id="theme-toggle">🌓</button>
         <div class="form-container">
+            
             <div class="form-box login-form">
                 <h2>Login</h2>
                 <form id="loginForm" name="loginForm" autocomplete="off">
@@ -17,6 +20,7 @@
                         <input type="email" id="loginEmail" required autocomplete="new-password">
                         <label for="loginEmail">Email</label>
                         <div class="line"></div>
+        
                     </div>
                     <div class="input-group">
                         <input type="password" id="loginPassword" required autocomplete="new-password">
@@ -28,6 +32,7 @@
                         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" class="google-logo">
                         <span>Sign in with Google</span>
                     </button>
+                    
                 </form>
                 <p class="switch-text">Don't have an account? <a href="#" id="switchToRegister">Register</a></p>
             </div>
@@ -61,6 +66,7 @@
                     </button>
                 </form>
                 <p class="switch-text">Already have an account? <a href="#" id="switchToLogin">Login</a></p>
+                
             </div>
         </div>
         <div class="decoration">
