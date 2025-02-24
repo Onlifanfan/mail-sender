@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const themeStylesheet = document.getElementById('theme-stylesheet');
     const body = document.body;
 
-    const themes = ['styles/light.css', 'styles/dark.css'];
+    const themes = ['styles/light/landing.css', 'styles/dark/landing.css'];
     let currentThemeIndex = 0;
 
     // Function to set the theme
