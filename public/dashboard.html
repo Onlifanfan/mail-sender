@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ColdAI Dashboard</title>
-    <link rel="stylesheet" href="/styles/dashboard.css">
+    <link rel="stylesheet" href="styles/dashboard.css" id="theme-stylesheet">
 </head>
 <body>
     <div class="container">
         <!-- Sidebar -->
         <nav class="sidebar">
-            <div class="logo">ColdAI</div>
+            <div class="logo">ColdAI
+              </div>              
             <ul>
                 <li>
                     <a href="#" data-section="dashboard" class="nav-link active">
@@ -43,10 +44,13 @@
         <main class="content">
             <header>
                 <h1>Welcome, <span id="userName">User</span></h1>
-                <button id="newCampaignBtn" class="btn-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
-                    New Campaign
-                </button>
+                <div class="header-buttons">
+                    <button id="newCampaignBtn" class="btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg>
+                        New Campaign
+                    </button>
+                    <button id="theme-toggle">🌓</button>
+                </div>
             </header>
 
             <!-- Dashboard Section -->
@@ -155,6 +159,6 @@
             </section>
         </main>
     </div>
-    <script src="/scripts/dashboard.js"></script>
+    <script src="scripts/dashboard.js"></script>
 </body>
 </html>
