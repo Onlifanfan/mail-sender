@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const themeStylesheet = document.getElementById('theme-stylesheet');
     const body = document.body;
 
-    const themes = ['styles/light/dashboard.css', 'styles/dark/dashboard.css'];
+    const themes = ['styles/dashboardl.css', 'styles/dashboard.css'];
     let currentThemeIndex = 0;
 
     // Function to set the theme
@@ -251,6 +251,34 @@ document.addEventListener('DOMContentLoaded', function () {
         currentThemeIndex = (currentThemeIndex + 1) % themes.length;
         setTheme(themes[currentThemeIndex]);
     });
+
+    // Logout function
+    document.getElementById('logout-link').addEventListener('click', function (event) {
+        event.preventDefault();
+
+        fetch('/api/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Odjava uspješna!');
+                    window.location.href = '/';
+                } else {
+                    alert('Odjava nije uspjela. Molimo pokušajte ponovno.');
+                }
+            })
+            .catch(error => console.error('Greška tijekom odjave:', error));
+    });
+    
+    
+    
+    
+    
+
+    
 
 
 });
