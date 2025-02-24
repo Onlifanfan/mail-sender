@@ -165,7 +165,7 @@ passport.use(
                 }
                 await user.save();
                 req.session.email = email;
-                await session.save();
+                await req.session.save();
                 return done(null, user);
             } catch (error) {
                 console.error("Google login error:", error);
