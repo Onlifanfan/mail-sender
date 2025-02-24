@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const themeStylesheet = document.getElementById('theme-stylesheet');
     const body = document.body;
 
-    const themes = ['styles/dashboardl.css', 'styles/dashboard.css'];
+    const themes = ['styles/light/dashboard.css', 'styles/dark/dashboard.css'];
     let currentThemeIndex = 0;
 
     // Function to set the theme
@@ -252,5 +252,5 @@ document.addEventListener('DOMContentLoaded', function () {
         setTheme(themes[currentThemeIndex]);
     });
 
-    
+
 });
