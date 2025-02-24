@@ -1,8 +1,6 @@
-// app.js - Rewritten for Enhanced Session Management and Cookie Security
+// app.js - Rewritten for Enhanced Session Management, Cookie Security, and Token Handling
 
-// Load environment variables from .env file (if present)
-require('dotenv').config();
-
+require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
@@ -15,6 +13,8 @@ const path = require('path');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');  // For encryption
 const User = require('./models/user'); // Import your User model
+const axios = require('axios');
+const { google } = require('googleapis');  // Google APIs
 
 const app = express();
 
@@ -22,27 +22,26 @@ const app = express();
 // 1. Environment Configuration (CRUCIAL)
 // --------------------------------------------------------------------------
 
-// Log environment variables EARLY to verify they are set correctly
-console.log("Starting app.js"); // First line of defense
-
-// Set the port based on environment variable, default to 3000 if not set
+console.log("Starting app.js");
 const PORT = process.env.PORT || 3000;
 console.log("PORT:", PORT);
-
-// Check NODE_ENV (important for cookie security)
 const NODE_ENV = process.env.NODE_ENV;
 console.log("NODE_ENV:", NODE_ENV);
-const IS_PRODUCTION = NODE_ENV === 'production'; // Boolean for easy checks
-
-// Set the base URL, used for redirects and email confirmations
+const IS_PRODUCTION = NODE_ENV === 'production';
 const BASE_URL = process.env.BASE_URL;
 console.log("BASE_URL:", BASE_URL);
+
+// Ensure critical environment variables are set
+if (!process.env.MONGODB_URI || !process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET || !process.env.SESSION_SECRET || !process.env.FRONTEND_URL) {
+    console.error("Critical environment variables are missing.  Check your .env file.");
+    process.exit(1);
+}
 
 // --------------------------------------------------------------------------
 // 2. Database Configuration
 // --------------------------------------------------------------------------
 
-const mongoURI = process.env.MONGODB_URI; // Get MongoDB URI from env
+const mongoURI = process.env.MONGODB_URI;
 console.log("MongoDB URI:", mongoURI);
 
 mongoose.connect(mongoURI)
@@ -53,62 +52,56 @@ mongoose.connect(mongoURI)
     .catch(err => {
         console.error('MongoDB connection error:', err);
         console.error('Make sure MongoDB is running and the URI is correct!');
-        process.exit(1); // Exit if the database connection fails (critical)
+        process.exit(1);
     });
 
 // --------------------------------------------------------------------------
 // 3. Middleware Configuration
 // --------------------------------------------------------------------------
 
-// Trust proxy (required if behind a reverse proxy like Nginx or Heroku)
-// This is *essential* for proper cookie handling in production
-app.set('trust proxy', 1); // Trust first proxy
+app.set('trust proxy', 1);
 
-// Serve static files from the 'public' directory
 app.use(express.static('public'));
-
-// Parse JSON and URL-encoded request bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CORS configuration (Important for cross-origin requests)
 const corsOptions = {
-    origin: IS_PRODUCTION ? process.env.FRONTEND_URL : '*', // Production: specific origin, Development: allow all
-    credentials: true,             // Allow cookies to be sent
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Specify allowed HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
-    optionsSuccessStatus: 204       // Some legacy browsers choke on 204
+    origin: IS_PRODUCTION ? process.env.FRONTEND_URL : '*',
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    optionsSuccessStatus: 204
 };
-console.log("CORS Options:", corsOptions);  // Log the CORS config
+console.log("CORS Options:", corsOptions);
 app.use(cors(corsOptions));
 
 // --------------------------------------------------------------------------
 // 4. Session Configuration (Critical for Cookie Management)
 // --------------------------------------------------------------------------
 
-const sessionSecret = process.env.SESSION_SECRET || 'your-default-secret';
+const sessionSecret = process.env.SESSION_SECRET;
 console.log("Session Secret Source:", sessionSecret === 'your-default-secret' ? 'DEFAULT' : 'Environment Variable');
 
 const sessionConfig = {
-    secret: sessionSecret,                // Use a strong, randomly generated secret
-    resave: false,                           // Don't save session if unmodified
-    saveUninitialized: false,              // Don't create session until something stored
-    store: MongoStore.create({               // Store session data in MongoDB
-        mongoUrl: mongoURI,               // MongoDB connection URI
-        collectionName: 'sessions',         // Collection name for sessions
-        ttl: 14 * 24 * 60 * 60,           // Session TTL (14 days)
-        autoRemove: 'native',            // Automatically remove expired sessions
+    secret: sessionSecret,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: mongoURI,
+        collectionName: 'sessions',
+        ttl: 14 * 24 * 60 * 60,
+        autoRemove: 'native',
     }),
     cookie: {
-        secure: IS_PRODUCTION,               // Only send over HTTPS in production
-        httpOnly: true,                  // Cookie cannot be accessed by client-side JavaScript
-        sameSite: 'lax',                   // Control cross-site cookie behavior
-        maxAge: 24 * 60 * 60 * 1000        // Session duration (1 day)
+        secure: IS_PRODUCTION,
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000
     }
 };
-console.log("Session Configuration:", sessionConfig); // Log session config
+console.log("Session Configuration:", sessionConfig);
 
-app.use(session(sessionConfig)); // Apply session middleware
+app.use(session(sessionConfig));
 
 // --------------------------------------------------------------------------
 // 5. Passport Configuration (Authentication)
@@ -118,6 +111,28 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Google Authentication Strategy
+
+// Function to refresh the access token
+async function refreshAccessToken(refreshToken) {
+    const oauth2Client = new google.auth.OAuth2(
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        `${BASE_URL}/auth/google/callback` // Replace with your redirect URI
+    );
+    oauth2Client.setCredentials({
+        refresh_token: refreshToken
+    });
+
+    try {
+        const { credentials } = await oauth2Client.refreshAccessToken();
+        const newAccessToken = credentials.access_token;
+        const newExpiryDate = new Date(Date.now() + (credentials.expiry_date - Date.now()));  // Calculate remaining lifespan of new token
+        return { accessToken: newAccessToken, expiryDate: newExpiryDate };
+    } catch (error) {
+        console.error('Error refreshing access token:', error);
+        throw error;
+    }
+}
 passport.use(
     new GoogleStrategy(
         {
@@ -130,7 +145,6 @@ passport.use(
             try {
                 const email = profile.emails[0].value;
                 const username = profile.name.givenName;
-
                 let user = await User.findOne({ email: email });
 
                 if (!user) {
@@ -139,13 +153,20 @@ passport.use(
                         email: email,
                         password: null,
                         registrationDate: new Date(),
-                        isConfirmed: true
+                        isConfirmed: true,
+                        accessToken: accessToken,
+                        refreshToken: refreshToken,
+                        tokenExpiration: new Date(Date.now() + 3600000), // 1 hour from now
                     });
-                    await user.save();
+                } else {
+                    user.accessToken = accessToken;
+                    user.refreshToken = refreshToken;
+                    user.tokenExpiration = new Date(Date.now() + 3600000);
                 }
-
-                // Store the *user object* (or minimal data like ID) in the session
-                return done(null, user); // Pass the full user object for session
+                await user.save();
+                req.session.email = email;
+                await session.save();
+                return done(null, user);
             } catch (error) {
                 console.error("Google login error:", error);
                 return done(error, null);
@@ -155,19 +176,17 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-    console.log("Serializing user:", user.email);
-    done(null, user.email); // Store only the user ID or essential info
+    done(null, user.id);
 });
 
-passport.deserializeUser(async (email, done) => {
+passport.deserializeUser(async (id, done) => {
     try {
-        console.log("Deserializing user:", email);
-        const user = await User.findOne({ email: email });
+        const user = await User.findById(id);
         if (!user) {
             console.error("Failed to deserialize user: User not found");
-            return done(null, false); // Indicate user not found
+            return done(null, false);
         }
-        return done(null, user); // Pass the full user object
+        return done(null, user);
     } catch (error) {
         console.error("Error during deserialization:", error);
         done(error, null);
@@ -178,10 +197,13 @@ passport.deserializeUser(async (email, done) => {
 // 6. Authentication Routes
 // --------------------------------------------------------------------------
 
-// Google Authentication Initiation
 app.get(
     "/auth/google",
-    passport.authenticate("google", { scope: ["profile", "email"] })
+    passport.authenticate("google", {
+        scope: ["profile", "email", "https://www.googleapis.com/auth/gmail.readonly"],
+        accessType: 'offline',
+        prompt: 'consent'
+    })
 );
 
 app.get(
@@ -219,23 +241,17 @@ app.get(
 // 7. Other Routes (Registration, Login, Logout, etc.)
 // --------------------------------------------------------------------------
 
-// Register
 app.post('/api/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
-
-        // Validation
         if (!username || !email || !password) {
             return res.status(400).json({ error: 'All fields are required' });
         }
-
-        // Check if email is already in use
         const emailExists = await User.findOne({ email });
         if (emailExists) {
             return res.status(400).json({ error: 'Email already exists' });
         }
 
-        // Store username and device information
         const user = new User({
             username: username,
             email: email,
@@ -244,18 +260,16 @@ app.post('/api/register', async (req, res) => {
             isConfirmed: false
         });
 
-        await user.save(); // Save the user to the database
+        await user.save();
 
-        // Generate email token
         const emailToken = jwt.sign(
-            { email }, // Store email instead of user object
-            process.env.SESSION_SECRET, // Use session secret for token
+            { email },
+            process.env.SESSION_SECRET,
             { expiresIn: '1d' }
         );
 
         const url = `${BASE_URL}/confirmation/${emailToken}`;
-
-        // Send confirmation email
+        // Transport is now outside the route handler to persist
         transporter.sendMail({
             from: '"Mail-sender" <your-email@gmail.com>',
             to: email,
@@ -280,7 +294,6 @@ app.post('/api/register', async (req, res) => {
             `,
         });
 
-        // Send JSON response
         res.json({
             message: 'Registration successful',
             redirect: '/load'
@@ -294,10 +307,7 @@ app.post('/api/register', async (req, res) => {
 
 app.get('/confirmation/:token', async (req, res) => {
     try {
-        // Verify token
         const { email } = jwt.verify(req.params.token, process.env.SESSION_SECRET);
-
-        // Check if the user exists
         User.findOne({ email: email })
             .then(present => {
                 if (present == null) {
@@ -326,7 +336,7 @@ app.post('/resend-email', async (req, res) => {
             return res.status(400).json({ error: 'Please provide an email address.' });
         }
 
-        const email = emails[0];  // Since we allow only one email
+        const email = emails[0];
 
         User.findOne({ email: email })
             .then(present => {
@@ -334,7 +344,6 @@ app.post('/resend-email', async (req, res) => {
                     return res.status(400).json({ error: 'Email address not found or already confirmed.' });
                 }
 
-                // Generate email token
                 const emailToken = jwt.sign(
                     { email },
                     process.env.SESSION_SECRET,
@@ -342,8 +351,6 @@ app.post('/resend-email', async (req, res) => {
                 );
 
                 const url = `${BASE_URL}/confirmation/${emailToken}`;
-
-                // Send confirmation email
                 transporter.sendMail({
                     from: '"Mail-sender" <your-email@gmail.com>',
                     to: email,
@@ -384,7 +391,6 @@ app.post('/api/login', async (req, res) => {
     try {
         const { userInput, password } = req.body;
 
-        // Validation
         if (!userInput || !password) {
             return res.status(400).json({ error: 'All fields are required' });
         }
@@ -409,14 +415,11 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Logout route to destroy the session
 app.post('/api/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) {
             return res.status(500).json({ error: 'Could not log out' });
         }
-
-        // Also remove session from the MongoDB store
         req.sessionStore.destroy(req.sessionID, (storeErr) => {
             if (storeErr) {
                 return res.status(500).json({ error: 'Could not log out and delete session from database' });
@@ -476,19 +479,16 @@ app.post('/api/setCampaignData', async (req, res) => {
 
 app.get('/api/getCampaignData', async (req, res) => {
     try {
-        // Check if the user is logged in
         if (!req.session.email) {
             return res.status(401).json({ error: 'User not logged in' });
         }
 
-        // Find the user
         const user = await User.findOne({ email: req.session.email });
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        // Return the campaigns data
         res.status(200).json({
             campaigns: user.campaigns,
             totalCampaigns: user.campaigns.length
@@ -499,6 +499,134 @@ app.get('/api/getCampaignData', async (req, res) => {
         res.status(500).json({ error: 'An error occurred while fetching campaign data' });
     }
 });
+
+function getMessageBody(payload) {
+    let body = '';
+
+    if (payload.mimeType === 'text/plain' && payload.body.data) {
+        body = Buffer.from(payload.body.data, 'base64').toString('utf-8');
+    } else if (payload.mimeType === 'text/html' && payload.body.data) {
+        body = Buffer.from(payload.body.data, 'base64').toString('utf-8');
+    } else if (payload.mimeType.startsWith('multipart/')) {
+        if (payload.parts) {
+            for (let part of payload.parts) {
+                body += getMessageBody(part);
+            }
+        }
+    }
+
+    return body;
+}
+
+
+// GET emails with pagination
+app.get('/api/getEmails', async (req, res) => {
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 emails per page
+    const startIndex = (page - 1) * limit;
+
+    try {
+        // 1. Check if the user is authenticated (using Passport.js)
+        if (!req.isAuthenticated()) {
+            return res.status(401).json({ error: 'Unauthorized: User has to connect Google email' });
+        }
+
+        // 2. Retrieve the user object (it should be attached by Passport)
+        const user = req.user;
+
+        // 3. Check if the access token needs to be refreshed
+        if (user.tokenExpiration <= new Date()) {
+            try {
+                // Refresh the access token
+                const { accessToken: newAccessToken, expiryDate: newExpiryDate } = await refreshAccessToken(user.refreshToken);
+
+                // Update the user's access token and expiry date in the database
+                user.accessToken = newAccessToken;
+                user.tokenExpiration = newExpiryDate;
+                await user.save();
+                console.log('Access token refreshed successfully');
+            } catch (refreshError) {
+                console.error('Error refreshing token in /api/getEmails:', refreshError);
+                return res.status(401).json({ error: 'Unauthorized: Could not refresh access token' });
+            }
+        }
+
+        // 4. Retrieve the access token from the user model (after potential refresh)
+        const accessToken = user.accessToken;
+
+        if (!accessToken) {
+            return res.status(400).json({ error: 'Access token not found for user' });
+        }
+
+        // 5. Fetch email message IDs from the Gmail API with pagination
+        try {
+            const response = await axios.get('https://www.googleapis.com/gmail/v1/users/me/messages', {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                params: {
+                    maxResults: limit, // Use the limit from the query parameters
+                    pageToken: req.query.pageToken // Add pageToken support for fetching next page
+                }
+            });
+
+            const messages = response.data.messages;
+            const nextPageToken = response.data.nextPageToken;
+
+            if (!messages) {
+                return res.json({ emails: [], nextPageToken: null }); // Return empty array if no messages
+            }
+
+            // 6. Fetch email details for each message ID (efficiently)
+            const emails = await Promise.all(messages.map(async (message) => {
+                try {
+                    const messageDetails = await axios.get(`https://www.googleapis.com/gmail/v1/users/me/messages/${message.id}`, {
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`
+                        },
+                        params: {
+                            format: 'full'
+                        }
+                    });
+
+                    const emailData = messageDetails.data;
+                    const body = getMessageBody(emailData.payload);
+                    const subject = emailData.payload.headers.find(header => header.name === 'Subject')?.value || '(No Subject)';
+                    const from = emailData.payload.headers.find(header => header.name === 'From')?.value || 'Unknown Sender';
+                    const snippet = emailData.snippet;
+                    const date = emailData.payload.headers.find(header => header.name === 'Date')?.value || 'Unknown Date';
+
+                    return {
+                        id: message.id,
+                        subject,
+                        sender: from,
+                        date,
+                        snippet,
+                        body: body
+                    };
+                } catch (error) {
+                    console.error(`Error fetching email details for message ${message.id}: ${error.message}`);
+                    return null; // Return null for failed email fetches
+                }
+            }));
+
+            // Filter out null results in case of individual email fetch failures
+            const validEmails = emails.filter(email => email);
+
+            // 7. Return the emails and the nextPageToken
+            return res.json({ emails: validEmails, nextPageToken: nextPageToken });
+        } catch (error) {
+            console.error('Gmail API error:', error);
+            return res.status(500).json({ error: 'Failed to fetch emails from Gmail API' });
+        }
+    } catch (error) {
+        console.error('Error in /api/getEmails route:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
+
 
 // Middleware to ensure user is logged in
 module.exports = {
