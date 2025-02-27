@@ -11,8 +11,8 @@
         <!-- Sidebar -->
         <nav class="sidebar">
             <div class="logo">
-                <a href="landing.html" style="color: inherit; text-decoration: none; display: block;">ColdAI</a>
-            </div>            
+                ColdAI
+            </div>
             <ul>
                 <li>
                     <a href="#" data-section="dashboard" class="nav-link active">
@@ -50,9 +50,6 @@
                         Logout
                     </a>
                 </li>
-                
-            
-                
             </ul>
         </nav>
 
@@ -105,6 +102,30 @@
                 <h2>Campaigns</h2>
                 <div id="campaignsList" class="campaigns-grid">
                     <!-- Campaigns will be dynamically inserted here -->
+                </div>
+            </section>
+
+            <section id="inbox" class="section hidden">
+                <!-- NEW: Inbox Section -->
+                <h2>Inbox</h2>
+                <div id="inbox-messages">
+                    <div id="email-details" class="email-details hidden">
+                        <div class="email-details-content">
+                            <div class="email-details-header">
+                                <h3 id="email-subject" class="email-subject"></h3>
+                                <button id="close-button" class="close-button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p id="email-sender" class="email-sender"></p>
+                            <p id="email-date" class="email-date"></p>
+                            <div id="email-body" class="email-body"></div>
+                        </div>
+                    </div>
+                    <!-- Email messages will be displayed here -->
                 </div>
             </section>
 
