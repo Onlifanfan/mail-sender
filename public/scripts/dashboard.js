@@ -22,6 +22,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const emailsPerPage = 10;
     const themes = ['styles/light/dashboard.css', 'styles/dark/dashboard.css'];
 
+    
+    // Hide default mouse cursor
+    document.body.style.cursor = 'none';
+    
     // --- Variables ---
     let currentPage = 1;
     let allEmails = [];
