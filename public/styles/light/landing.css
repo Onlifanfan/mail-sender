@@ -603,6 +603,30 @@ footer {
 }
 
 @media (max-width: 768px) {
+  #theme-toggle {
+    display: none; /* Hide the desktop theme toggle on mobile */
+  }
+
+  #main-nav #theme-toggle-mobile {
+    display: flex; /* Show the mobile theme toggle */
+    margin: 15px auto;
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  #main-nav #theme-toggle-mobile:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+  }
+
   header .container {
     flex-direction: column;
     align-items: flex-start;
