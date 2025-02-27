@@ -100,9 +100,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Theme toggle
   const themeToggle = document.getElementById("theme-toggle")
+  const themeToggleMobile = document.getElementById("theme-toggle-mobile")
   const themeStylesheet = document.getElementById("theme-stylesheet")
 
-  if (themeToggle && themeStylesheet) {
+  if ((themeToggle || themeToggleMobile) && themeStylesheet) {
     const themes = ["/styles/light/landing.css", "/styles/dark/landing.css"]
     let currentThemeIndex = 0
 
@@ -132,11 +133,19 @@ document.addEventListener("DOMContentLoaded", () => {
       setTheme(themes[currentThemeIndex])
     }
 
-    // Toggle the theme
-    themeToggle.addEventListener("click", () => {
+    // Toggle the theme function
+    function toggleTheme() {
       currentThemeIndex = (currentThemeIndex + 1) % themes.length
       setTheme(themes[currentThemeIndex])
-    })
+    }
+
+    // Add event listeners to both theme toggle buttons
+    if (themeToggle) {
+      themeToggle.addEventListener("click", toggleTheme)
+    }
+    if (themeToggleMobile) {
+      themeToggleMobile.addEventListener("click", toggleTheme)
+    }
   }
 
   // Logout functionality
