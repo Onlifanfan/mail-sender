@@ -583,6 +583,11 @@ footer {
   }
 }
 
+/* Add this CSS rule to properly hide the mobile theme toggle on desktop */
+#theme-toggle-mobile {
+  display: none;
+}
+
 @media (max-width: 768px) {
   #theme-toggle {
     display: none; /* Hide the desktop theme toggle on mobile */
