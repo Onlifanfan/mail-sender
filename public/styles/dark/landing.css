@@ -589,27 +589,37 @@ footer {
 }
 
 @media (max-width: 768px) {
+  header {
+    padding: 0.5rem 0;
+  }
+
   header .container {
-    flex-direction: row; /* Change from column to row */
-    align-items: center; /* Center items vertically */
-    justify-content: space-between; /* Space between logo and menu */
-    padding: 0.5rem 0; /* Reduce padding */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
   }
 
   #branding {
-    margin-bottom: 0; /* Remove bottom margin */
+    margin: 0;
   }
 
   #branding h1 {
-    font-size: 1.4rem; /* Reduce font size on mobile */
+    font-size: 1.2rem;
+    line-height: 1;
   }
 
   .nav-container {
-    width: auto; /* Change from 100% to auto */
+    display: flex;
+    align-items: center;
+    width: auto;
   }
 
   #mobile-menu-toggle {
-    padding: 8px; /* Adjust padding to match height */
+    display: block;
+    padding: 8px;
+    margin: 0;
   }
 
   #theme-toggle {
