@@ -14,6 +14,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    cursor: none !important;
 }
 
 body {
@@ -504,6 +505,7 @@ textarea {
     .load-more-button:hover {
         background-color: #0056b3;
     }
+
 
 /* Custom mouse pointer */
 .custom-mouse-pointer {
