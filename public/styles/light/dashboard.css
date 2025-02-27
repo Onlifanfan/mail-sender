@@ -1,12 +1,15 @@
 :root {
-    --primary-color: #0056b3;
-    --bg-light: #f8f9fa;
-    --bg-lighter: #ffffff;
-    --text-dark: #333333;
-    --text-dim: #6c757d;
-    --card-bg: #ffffff;
+    --primary-color: #007bff; /* Primary color - a nice blue */
+    --bg-light: #f5f5f5; /* Light grey background */
+    --bg-lighter: #ffffff; /* White background for cards, etc. */
+    --text-dark: #333333; /* Dark grey for primary text */
+    --text-dim: #666666; /* Medium grey for less important text */
+    --card-bg: #f9f9f9; /* Light grey for card backgrounds */
+    --border-color: #ddd; /* Light grey for borders */
+    --shadow-color: rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
+/* General Styles */
 * {
     margin: 0;
     padding: 0;
@@ -18,6 +21,7 @@ body {
     background-color: var(--bg-light);
     color: var(--text-dark);
     line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for theme changes */
 }
 
 .container {
@@ -25,15 +29,16 @@ body {
     min-height: 100vh;
 }
 
-/* Sidebar styles */
+/* Sidebar Styles */
 .sidebar {
     width: 250px;
-    background-color: var(--bg-lighter);
+    background-color: var(--card-bg);
     padding: 2rem;
     position: fixed;
     height: 100vh;
     overflow-y: auto;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 0 5px var(--shadow-color); /* Soft shadow */
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .logo {
@@ -73,54 +78,56 @@ body {
         height: 1.25rem;
     }
 
-/* Main content styles */
+/* Main Content Styles */
 .content {
     flex: 1;
     margin-left: 250px;
     padding: 2rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+
+#logout-link {
+    color: inherit; /* Inherit color from parent element */
+    text-decoration: none; /* Remove underline */
+    display: flex; /* Use flexbox */
+    align-items: center; /* Vertically align */
+    padding: 0.5rem 1rem; /* Match padding */
+}
+
+    #logout-link svg {
+        margin-right: 0.75rem; /* Match spacing between icon and text */
+        fill: currentColor; /* Ensure the icon inherits the text color */
+    }
 
 header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 10px 20px;
+    background-color: var(--card-bg); /* Set header background */
+    border-bottom: 1px solid var(--border-color); /* Border for contrast */
 }
 
 .header-buttons {
     display: flex;
-    align-items: center; /* Vertically center the buttons */
+    align-items: center;
 }
 
 /* Style for New Campaign Button */
 #newCampaignBtn {
-    padding: 10px 20px;  /* Adjust padding as needed */
-    font-size: 1.5em;     /* Adjust font size as needed */
+    padding: 10px 20px;
+    font-size: 1.5em;
 }
-
-#logout-link {
-    color: inherit;         /* Inherit color from parent element */
-    text-decoration: none;  /* Remove underline */
-    display: flex;          /* Use flexbox */
-    align-items: center;    /* Vertically align */
-    padding: 0.5rem 1rem;    /* Match padding */
-}
-
-#logout-link svg {
-    margin-right: 0.75rem; /* Match spacing between icon and text */
-    fill: currentColor;     /* Ensure the icon inherits the text color */
-}
-
 
 /* Style for theme-toggle Button */
 #theme-toggle {
-    font-size: 2.5em;  /* Adjust the font size */
-    border: none;       /* Remove the border */
-    background-color: transparent; /* Make the background transparent */
-    cursor: pointer;    /* Add a pointer on hover */
-    outline: none;     /* Remove the outline on focus */
-    /* Add padding and height to align */
-    padding: 10px 20px;     /* Adjust the values until they match */
+    font-size: 2.5em;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    outline: none;
+    padding: 10px 20px;
 }
 
 h1 {
@@ -148,7 +155,7 @@ h1 {
 }
 
     .btn-primary:hover {
-        background-color: #004494;
+        background-color: #0056b3;
     }
 
     .btn-primary:disabled {
@@ -156,7 +163,7 @@ h1 {
         cursor: not-allowed;
     }
 
-/* Stats grid */
+/* Stats Grid */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -168,7 +175,9 @@ h1 {
     background-color: var(--card-bg);
     padding: 1.5rem;
     border-radius: 0.75rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--shadow-color); /* Soft shadow */
+    border: 1px solid var(--border-color); /* Light grey border */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
     .stat-card h3 {
@@ -183,7 +192,7 @@ h1 {
         font-weight: bold;
     }
 
-/* Form styles */
+/* Form Styles */
 .form-group {
     margin-bottom: 1.5rem;
 }
@@ -200,8 +209,8 @@ textarea,
 select {
     width: 100%;
     padding: 0.75rem;
-    background-color: var(--bg-lighter);
-    border: 1px solid #ced4da;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color); /* Light grey border */
     border-radius: 0.5rem;
     color: var(--text-dark);
     font-size: 1rem;
@@ -214,7 +223,7 @@ select {
     select:focus {
         outline: none;
         border-color: var(--primary-color);
-        box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.2);
+        box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.2); /* Blue shadow */
     }
 
 textarea {
@@ -222,7 +231,7 @@ textarea {
     resize: vertical;
 }
 
-/* Campaigns grid */
+/* Campaigns Grid */
 .campaigns-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -234,7 +243,9 @@ textarea {
     background-color: var(--card-bg);
     border-radius: 0.75rem;
     padding: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--shadow-color); /* Soft shadow */
+    border: 1px solid var(--border-color); /* Light grey border */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .campaign-header {
@@ -272,7 +283,7 @@ textarea {
     align-items: center;
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid #e9ecef;
+    border-top: 1px solid var(--border-color); /* Light grey border */
 }
 
 .date {
@@ -280,7 +291,7 @@ textarea {
     color: var(--text-dim);
 }
 
-/* Section visibility */
+/* Section Visibility */
 .section {
     display: block;
     opacity: 1;
@@ -297,7 +308,9 @@ textarea {
     background-color: var(--card-bg);
     padding: 1.5rem;
     border-radius: 0.75rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--shadow-color); /* Soft shadow */
+    border: 1px solid var(--border-color); /* Light grey border */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
     .recent-activity h3 {
@@ -311,14 +324,14 @@ textarea {
 
     #activityList li {
         padding: 0.75rem 0;
-        border-bottom: 1px solid #e9ecef;
+        border-bottom: 1px solid var(--border-color); /* Light grey border */
     }
 
         #activityList li:last-child {
             border-bottom: none;
         }
 
-/* Responsive design */
+/* Responsive Design */
 @media (max-width: 768px) {
     .sidebar {
         width: 100%;
@@ -343,42 +356,151 @@ textarea {
         gap: 1rem;
         text-align: center;
     }
-}
 
-.form-group select {
-    width: 100%;
-    padding: 0.75rem;
-    background-color: var(--bg-lighter);
-    border: 1px solid #ced4da;
-    border-radius: 0.5rem;
-    color: var(--text-dark);
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    background-size: 0.75rem;
-    padding-right: 2.5rem;
-}
-
-    .form-group select:focus {
-        outline: none;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.2);
-    }
-
-    .form-group select option {
-        background-color: var(--bg-lighter);
+    .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color); /* Light grey border */
+        border-radius: 0.5rem;
         color: var(--text-dark);
-        padding: 0.5rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 0.75rem;
+        padding-right: 2.5rem;
     }
 
-        .form-group select option:hover,
-        .form-group select option:focus,
-        .form-group select option:active {
-            background-color: var(--primary-color);
-            color: var(--bg-lighter);
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.2); /* Blue shadow */
         }
+
+        .form-group select option {
+            background-color: var(--card-bg);
+            color: var(--text-dark);
+            padding: 0.5rem;
+        }
+
+            .form-group select option:hover,
+            .form-group select option:focus,
+            .form-group select option:active {
+                background-color: var(--primary-color);
+            }
+}
+
+/* Added styling for Email */
+.email-message {
+    cursor: pointer;
+    background-color: var(--card-bg);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    border: 1px solid var(--border-color); /* Light grey border */
+}
+
+    .email-message h4 {
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+    }
+
+    .email-message p {
+        color: var(--text-dim);
+        margin-bottom: 0.25rem;
+    }
+
+    .email-message hr {
+        border-top: 1px solid var(--border-color);
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+.email-details {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--card-bg);
+    color: var(--text-dark);
+    padding: 2rem;
+    border-radius: 0.75rem; /* Consistent border radius */
+    box-shadow: 0 4px 20px var(--shadow-color); /* Soft shadow */
+    max-width: 80%;
+    max-height: 80vh;
+    overflow-y: auto;
+    z-index: 1000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif; /* Consistent font */
+    border: 1px solid var(--primary-color); /* Blue border using primary color */
+}
+
+    .email-details h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--primary-color); /* Use primary color for heading */
+    }
+
+    .email-details p {
+        margin-bottom: 0.75rem;
+        color: var(--text-dim); /* Use dimmed text for paragraphs */
+        font-size: 0.95rem;
+    }
+.email-body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif; /* Consistent font */
+    font-size: 1rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background-color: var(--card-bg);
+    color: var(--text-dark);
+    padding: 1.25rem;
+    border-radius: 0.5rem; /* Consistent border radius */
+    margin-top: 1.25rem;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    border: 1px solid var(--border-color); /* Light grey border */
+}
+
+.close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: var(--primary-color);
+    color: var(--bg-lighter);
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 0.5rem; /* Consistent border radius */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+    .close-button:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px var(--shadow-color);
+    }
+
+    .close-button:active {
+        transform: translateY(0);
+        box-shadow: none;
+    }
+
+.load-more-button {
+    background-color: var(--primary-color);
+    color: var(--bg-lighter);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+    .load-more-button:hover {
+        background-color: #0056b3;
+    }
