@@ -589,6 +589,29 @@ footer {
 }
 
 @media (max-width: 768px) {
+  header .container {
+    flex-direction: row; /* Change from column to row */
+    align-items: center; /* Center items vertically */
+    justify-content: space-between; /* Space between logo and menu */
+    padding: 0.5rem 0; /* Reduce padding */
+  }
+
+  #branding {
+    margin-bottom: 0; /* Remove bottom margin */
+  }
+
+  #branding h1 {
+    font-size: 1.4rem; /* Reduce font size on mobile */
+  }
+
+  .nav-container {
+    width: auto; /* Change from 100% to auto */
+  }
+
+  #mobile-menu-toggle {
+    padding: 8px; /* Adjust padding to match height */
+  }
+
   #theme-toggle {
     display: none; /* Hide the desktop theme toggle on mobile */
   }
@@ -611,15 +634,6 @@ footer {
 
   #main-nav #theme-toggle-mobile:hover {
     background-color: rgba(0, 123, 255, 0.1);
-  }
-
-  header .container {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  #branding {
-    margin-bottom: 10px;
   }
 
   .nav-container {
