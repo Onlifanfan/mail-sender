@@ -563,3 +563,66 @@ input:hover,
 #confirmPassword {
     cursor: none;
 }
+
+/* Custom mouse pointer */
+.custom-mouse-pointer {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(255, 165, 0, 0.2);
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s, background-color 0.3s;
+    mix-blend-mode: difference;
+}
+
+    .custom-mouse-pointer::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 8px;
+        background-color: #ffa500;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        animation: cursor-pulse 1.5s infinite;
+    }
+
+    .custom-mouse-pointer::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 30px;
+        height: 30px;
+        border: 2px solid rgba(255, 165, 0, 0.7);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        animation: cursor-rotate 3s linear infinite;
+    }
+
+@keyframes cursor-pulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0.7;
+    }
+}
+
+@keyframes cursor-rotate {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
