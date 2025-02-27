@@ -22,15 +22,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const emailsPerPage = 10;
     const themes = ['styles/light/dashboard.css', 'styles/dark/dashboard.css'];
 
-    
     // Hide default mouse cursor
     document.body.style.cursor = 'none';
-    
+
     // --- Variables ---
     let currentPage = 1;
     let allEmails = [];
     let nextPageToken = null;
     let currentThemeIndex = 0;
+    let currentlyOpenEmailDetails = null;  // Store the currently open 
 
     // --- Load More Button ---
     const loadMoreButton = document.createElement('button');
@@ -130,9 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
             emailDiv.addEventListener('click', () => showEmailDetails(email));
             emailList.appendChild(emailDiv);
         });
-        inboxMessagesDiv.appendChild(loadMoreButton); // Add the button
-
-        // Restore the scroll position after adding the new emails
+        inboxMessagesDiv.appendChild(loadMoreButton); // Add the button... // Restore the scroll position after adding the new emails
         inboxMessagesDiv.scrollTop = scrollPosition;
     }
 
@@ -142,24 +140,45 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function showEmailDetails(email) {
-        const detailsDiv = document.createElement('div');
-        detailsDiv.classList.add('email-details');
 
-        detailsDiv.innerHTML = `
-            <h3>${email.subject}</h3>
-            <p><strong>From:</strong> ${email.sender}</p>
-            <p><strong>Date:</strong> ${email.date}</p>
-            <div class="email-body">${email.body}</div>
-            <button class="close-button">Close</button>
+    if (currentlyOpenEmailDetails) {
+            currentlyOpenEmailDetails.remove();
+        }
+
+    const detailsDiv = document.createElement('div');
+    detailsDiv.classList.add('email-details');
+
+    let bodyContent;
+    if (email.body) {
+        // Create a container for the HTML content
+        bodyContent = `
+            <div class="email-body-container">
+                <div class="email-body-content">${email.body}</div>
+            </div>
+        `;
+    } else {
+        bodyContent = '<p>No content</p>';
+    }
+
+    detailsDiv.innerHTML = `
+            <div class="email-details-container">
+                <h3>${email.subject}</h3>
+                <p><strong>From:</strong> ${email.sender}</p>
+                <p><strong>Date:</strong> ${email.date}</p>
+                ${bodyContent}
+                <button class="close-button">Close</button>
+            </div>
         `;
 
         const closeButton = detailsDiv.querySelector('.close-button');
         closeButton.addEventListener('click', (e) => {
             e.stopPropagation();
             detailsDiv.remove();
+            currentlyOpenEmailDetails = null; // Clear the variable
         });
 
         inboxMessagesDiv.appendChild(detailsDiv);
+        currentlyOpenEmailDetails = detailsDiv;  // Store the current details div
     }
 
     // --- Helper Function ---
@@ -262,6 +281,12 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Campaign creation error:', error);
         }
     }
+
+    // Function to view campaign details (Placeholder - implement as needed)
+    window.viewCampaignDetails = function (campaignId) {
+        alert(`View details for campaign ID: ${campaignId}`);
+        // Implement your logic to display the campaign details
+    };
 
     // --- Dashboard ---
     function updateDashboard() {
