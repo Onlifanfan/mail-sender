@@ -11,6 +11,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    cursor: none !important;
 }
 
 body {
@@ -115,7 +116,6 @@ header {
     font-size: 2.5em; /* Adjust the font size */
     border: none; /* Remove the border */
     background-color: transparent; /* Make the background transparent */
-    cursor: pointer; /* Add a pointer on hover */
     outline: none; /* Remove the outline on focus */
     /* Add padding and height to align */
     padding: 10px 20px; /* Adjust the values until they match */
@@ -141,7 +141,6 @@ h1 {
     border-radius: 0.5rem;
     font-size: 1rem;
     font-weight: 500;
-    cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
@@ -378,13 +377,13 @@ textarea {
             background-color: var(--primary-color);
         }
 
-/*Added styling for Email*/
+/* Added styling for Email */
 .email-message {
-    cursor: pointer;
     background-color: var(--card-bg);
     border-radius: 0.75rem;
     padding: 1.5rem;
     margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
 }
 
     .email-message h4 {
@@ -398,17 +397,18 @@ textarea {
     }
 
     .email-message hr {
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid rgba(255, 255, 255, 0.1); /* Light border in dark theme */
         margin-top: 1rem;
         margin-bottom: 1rem;
     }
+
 .email-details {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: var(--bg-darker); /* Use dark background */
-    color: var(--text-light); /* Use light text color */
+    background-color: var(--bg-darker); /* Dark background */
+    color: var(--text-light); /* Light text color */
     padding: 2rem;
     border-radius: 0.75rem; /* Consistent border radius */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Stronger shadow for emphasis */
@@ -417,7 +417,7 @@ textarea {
     overflow-y: auto;
     z-index: 1000;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif; /* Consistent font */
-    border: 1px solid rgba(255, 165, 0, 0.3); /* Add primary color border */
+    border: 1px solid var(--primary-color); /* Use primary color for border */
 }
 
     .email-details h3 {
@@ -443,8 +443,8 @@ textarea {
     padding: 1.25rem;
     border-radius: 0.5rem; /* Consistent border radius */
     margin-top: 1.25rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Light border */
 }
 
 .close-button {
@@ -456,7 +456,6 @@ textarea {
     border: none;
     padding: 0.6rem 1rem;
     border-radius: 0.5rem; /* Consistent border radius */
-    cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 500;
     font-size: 1rem;
@@ -473,13 +472,13 @@ textarea {
         box-shadow: none;
     }
 
+
 .load-more-button {
     background-color: #007bff;
     color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
-    cursor: pointer;
     margin-top: 10px;
 }
 
