@@ -501,21 +501,30 @@ app.get('/api/getCampaignData', async (req, res) => {
 });
 
 function getMessageBody(payload) {
-    let body = '';
-
-    if (payload.mimeType === 'text/plain' && payload.body.data) {
-        body = Buffer.from(payload.body.data, 'base64').toString('utf-8');
-    } else if (payload.mimeType === 'text/html' && payload.body.data) {
-        body = Buffer.from(payload.body.data, 'base64').toString('utf-8');
+    if (payload.mimeType === 'text/html' && payload.body.data) {
+        return Buffer.from(payload.body.data, 'base64').toString('utf-8');
+    } else if (payload.mimeType === 'text/plain' && payload.body.data) {
+        return Buffer.from(payload.body.data, 'base64').toString('utf-8');
     } else if (payload.mimeType.startsWith('multipart/')) {
         if (payload.parts) {
-            for (let part of payload.parts) {
-                body += getMessageBody(part);
+            // First, try to find an HTML part
+            const htmlPart = payload.parts.find(part => part.mimeType === 'text/html');
+            if (htmlPart) {
+                return getMessageBody(htmlPart);
             }
+            
+            // If no HTML part, look for a plain text part
+            const plainTextPart = payload.parts.find(part => part.mimeType === 'text/plain');
+            if (plainTextPart) {
+                return getMessageBody(plainTextPart);
+            }
+            
+            // If neither HTML nor plain text is found, concatenate all parts
+            return payload.parts.map(part => getMessageBody(part)).join('\n');
         }
     }
-
-    return body;
+    
+    return ''; // Return empty string if no readable content is found
 }
 
 
