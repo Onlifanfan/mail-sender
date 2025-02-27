@@ -610,7 +610,7 @@ footer {
 @media (max-width: 768px) {
   /* Update header styles for mobile */
   header {
-    padding: 0.5rem 0;
+    padding: 1rem 0;
   }
 
   header .container {
@@ -626,8 +626,8 @@ footer {
   }
 
   #branding h1 {
-    font-size: 1.2rem;
-    line-height: 1;
+    font-size: 1.6rem; /* Increase font size */
+    line-height: 1.2;
   }
 
   .nav-container {
@@ -638,7 +638,7 @@ footer {
 
   #mobile-menu-toggle {
     display: block;
-    padding: 8px;
+    padding: 10px;
     margin: 0;
   }
 
@@ -781,4 +781,3 @@ footer {
     padding: 12px;
   }
 }
-
