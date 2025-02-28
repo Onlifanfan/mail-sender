@@ -18,19 +18,20 @@
   --shadow-color: rgba(0, 0, 0, 0.3);
 
   /* Derived variables */
-  --bg-color: var(--bg-dark);
-  --text-color: var(--text-light);
-  --header-bg: rgba(26, 26, 26, 0.9);
-  --section-bg: var(--bg-darker);
-  --feature-bg: var(--card-bg);
-  --pricing-bg: var(--card-bg);
-  --input-bg: #2a2a2a;
-  --highlight-color: var(--primary-color);
-  --button-gradient: linear-gradient(45deg, var(--primary-color), #3a95ff);
-  --button-hover-shadow: 0 0 30px rgba(0, 123, 255, 0.5);
-  --pointer-bg: rgba(0, 123, 255, 0.2);
-  --pointer-inner: var(--primary-color);
-  --pointer-outer: rgba(0, 123, 255, 0.7);
+  --bg-color: #000;
+    --text-color: #fff;
+    --header-bg: rgba(0, 0, 0, 0.8);
+    --section-bg: rgba(20, 20, 20, 0.8);
+    --feature-bg: rgba(30, 30, 30, 0.8);
+    --pricing-bg: rgba(30, 30, 30, 0.8);
+    --input-bg: rgba(30, 30, 30, 0.8);
+    --border-color: rgba(255, 165, 0, 0.2);
+    --highlight-color: #ffa500;
+    --button-gradient: linear-gradient(45deg, #ffa500, #ff4500);
+    --button-hover-shadow: 0 0 30px rgba(255, 165, 0, 0.5);
+    --pointer-bg: rgba(255, 165, 0, 0.2);
+    --pointer-inner: #ffa500;
+    --pointer-outer: rgba(255, 165, 0, 0.7);
 }
 
 body {
