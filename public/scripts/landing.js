@@ -172,21 +172,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Smooth scrolling for anchor links
+  // Smooth scrolling for anchor links
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener("click", function (e) {
-      e.preventDefault()
+      anchor.addEventListener("click", function (e) {
+          e.preventDefault()
 
-      const targetId = this.getAttribute("href")
-      if (targetId === "#") return
-
-      const targetElement = document.querySelector(targetId)
-      if (targetElement) {
-        window.scrollTo({
-          top: targetElement.offsetTop - 80, // Adjust for header height
-          behavior: "smooth",
-        })
-      }
-    })
+          const targetId = this.getAttribute('href').substring(1);
+          const targetElement = document.getElementById(targetId);
+          if (targetElement) {
+            
+              window.scrollTo({
+                  top: targetElement.offsetTop - 80, // Adjust for header height
+                  behavior: "smooth",
+              })
+          }
+      })
   })
-})
 
