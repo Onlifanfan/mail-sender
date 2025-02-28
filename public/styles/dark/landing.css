@@ -3,7 +3,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  cusrsor: none !important;
 }
 
 :root {
@@ -590,27 +589,35 @@ footer {
 }
 
 @media (max-width: 768px) {
+  /* Update header styles for mobile */
+  header {
+    padding: 0.5rem 0;
+  }
+
   header .container {
-    flex-direction: row; /* Change from column to row */
-    align-items: center; /* Center items vertically */
-    justify-content: space-between; /* Space between logo and menu */
-    padding: 0.5rem 0; /* Reduce padding */
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
   }
 
   #branding {
-    margin-bottom: 0; /* Remove bottom margin */
+    margin: 0;
   }
 
   #branding h1 {
-    font-size: 1.4rem; /* Reduce font size on mobile */
+    font-size: 1.2rem;
+    line-height: 1;
   }
 
   .nav-container {
-    width: auto; /* Change from 100% to auto */
+    width: auto;
   }
 
   #mobile-menu-toggle {
-    padding: 8px; /* Adjust padding to match height */
+    display: block;
+    padding: 8px;
+    margin: 0;
   }
 
   #theme-toggle {
@@ -634,16 +641,7 @@ footer {
   }
 
   #main-nav #theme-toggle-mobile:hover {
-    background-color: rgba(0, 123, 255, 0.1);
-  }
-
-  .nav-container {
-    width: 100%;
-    justify-content: flex-end;
-  }
-
-  #mobile-menu-toggle {
-    display: block;
+    background-color: rgba(255, 165, 0, 0.1);
   }
 
   #main-nav {
@@ -674,17 +672,15 @@ footer {
   }
 
   .header-buttons {
-    margin-top: 15px;
-    width: 100%;
-    justify-content: flex-end;
+    display: none; /* Hide header buttons on mobile */
   }
 
   #showcase {
-    padding-top: 150px;
+    padding-top: 100px;
   }
 
   #showcase h1 {
-    font-size: 2.2rem;
+    font-size: 2rem;
   }
 
   #showcase p {
@@ -692,7 +688,7 @@ footer {
   }
 
   .section {
-    padding: 60px 0;
+    padding: 40px 0;
   }
 
   .section h2 {
@@ -722,16 +718,16 @@ footer {
 
 @media (max-width: 480px) {
   .cta-button {
-    padding: 12px 25px;
+    padding: 10px 20px;
     font-size: 0.9rem;
   }
 
   #showcase h1 {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
   }
 
   .price {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .section h2 {
@@ -740,7 +736,7 @@ footer {
 
   input,
   textarea {
-    padding: 12px;
+    padding: 10px;
   }
 }
 
