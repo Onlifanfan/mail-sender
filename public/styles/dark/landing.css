@@ -66,7 +66,8 @@ header .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  max-width: 1400px;
 }
 
 #theme-toggle {
@@ -83,6 +84,8 @@ header .container {
 
 #branding h1 {
   font-size: 1.8rem;
+  display: flex;
+  align-items: center;
   margin: 0;
 }
 
