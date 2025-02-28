@@ -8,10 +8,10 @@
 
 :root {
   /* Dark mode variables - matching dashboard theme */
-  --primary-color: #007bff;
+  --primary-color: #ffa500;
   --bg-dark: #121212;
   --bg-darker: #1a1a1a;
-  --text-light: #f5f5f5;
+  --text-light: #ffa500;
   --text-dim: #aaaaaa;
   --card-bg: #252525;
   --border-color: #444;
@@ -19,19 +19,19 @@
 
   /* Derived variables */
   --bg-color: #000;
-    --text-color: #fff;
-    --header-bg: rgba(0, 0, 0, 0.8);
-    --section-bg: rgba(20, 20, 20, 0.8);
-    --feature-bg: rgba(30, 30, 30, 0.8);
-    --pricing-bg: rgba(30, 30, 30, 0.8);
-    --input-bg: rgba(30, 30, 30, 0.8);
-    --border-color: rgba(255, 165, 0, 0.2);
-    --highlight-color: #ffa500;
-    --button-gradient: linear-gradient(45deg, #ffa500, #ff4500);
-    --button-hover-shadow: 0 0 30px rgba(255, 165, 0, 0.5);
-    --pointer-bg: rgba(255, 165, 0, 0.2);
-    --pointer-inner: #ffa500;
-    --pointer-outer: rgba(255, 165, 0, 0.7);
+  --text-color: #fff;
+  --header-bg: rgba(0, 0, 0, 0.8);
+  --section-bg: rgba(20, 20, 20, 0.8);
+  --feature-bg: rgba(30, 30, 30, 0.8);
+  --pricing-bg: rgba(30, 30, 30, 0.8);
+  --input-bg: rgba(30, 30, 30, 0.8);
+  --border-color: rgba(255, 165, 0, 0.2);
+  --highlight-color: #ffa500;
+  --button-gradient: linear-gradient(45deg, #ffa500, #ff4500);
+  --button-hover-shadow: 0 0 30px rgba(255, 165, 0, 0.5);
+  --pointer-bg: rgba(255, 165, 0, 0.2);
+  --pointer-inner: #ffa500;
+  --pointer-outer: rgba(255, 165, 0, 0.7);
 }
 
 body {
@@ -51,15 +51,15 @@ body {
 
 /* Header styles */
 header {
-  background: var(--header-bg);
+  background: rgba(10, 10, 10, 0.9);
   backdrop-filter: blur(10px);
   padding: 1rem 0;
   position: fixed;
   width: 100%;
   top: 0;
   z-index: 1000;
-  border-bottom: 2px solid rgba(255, 165, 0, 0.3);
-  box-shadow: 0 4px 6px -1px var(--shadow-color);
+  border-bottom: 2px solid rgba(255, 165, 0, 0.5);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
 }
 
 header .container {
@@ -68,6 +68,36 @@ header .container {
   align-items: center;
   flex-wrap: nowrap;
   max-width: 1400px;
+}
+
+#branding {
+  display: flex;
+  align-items: center;
+}
+
+#branding h1 {
+  font-size: 2rem;
+  margin: 0;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #ffa500, #ff4500);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.highlight {
+  color: var(--highlight-color);
+  text-shadow: 0 0 15px rgba(255, 165, 0, 0.7);
+  animation: glow 2s ease-in-out infinite alternate;
+  font-weight: 700;
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
 #theme-toggle {
@@ -80,24 +110,6 @@ header .container {
 
 #theme-toggle:hover {
   transform: scale(1.1);
-}
-
-#branding h1 {
-  font-size: 1.8rem;
-  display: flex;
-  align-items: center;
-  margin: 0;
-}
-
-.highlight {
-  color: var(--highlight-color);
-    text-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
-    animation: glow 2s ease-in-out infinite alternate;
-}
-
-.nav-container {
-  display: flex;
-  align-items: center;
 }
 
 #mobile-menu-toggle {
@@ -121,20 +133,25 @@ header .container {
 nav ul {
   list-style: none;
   display: flex;
+  margin: 0;
+  padding: 0;
 }
 
 nav ul li {
-  margin-left: 25px;
+  margin-left: 30px;
+  position: relative;
 }
 
 nav ul li a {
   color: var(--text-color);
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 0.9rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
+  font-weight: 500;
   transition: all 0.3s ease;
   position: relative;
+  padding: 5px 0;
 }
 
 nav ul li a::after {
@@ -142,10 +159,11 @@ nav ul li a::after {
   position: absolute;
   width: 0;
   height: 2px;
-  bottom: -5px;
+  bottom: -2px;
   left: 0;
-  background-color: var(--primary-color);
+  background: linear-gradient(90deg, #ffa500, #ff4500);
   transition: width 0.3s ease;
+  border-radius: 2px;
 }
 
 nav ul li a:hover::after {
@@ -153,37 +171,63 @@ nav ul li a:hover::after {
 }
 
 nav ul li a:hover {
-  color: var(--primary-color);
-  text-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
+  color: #ffa500;
+  text-shadow: 0 0 8px rgba(255, 165, 0, 0.4);
 }
 
 .header-buttons {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
+}
+
+.dashboard-button {
+  display: inline-block;
+  padding: 10px 25px;
+  background: var(--button-gradient);
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  border: none;
+  box-shadow: 0 4px 10px rgba(255, 69, 0, 0.3);
+}
+
+.dashboard-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(255, 69, 0, 0.5);
 }
 
 .logout-button {
   display: inline-flex;
   align-items: center;
-  color: inherit;
+  gap: 8px;
+  color: var(--text-dim);
   text-decoration: none;
   background: none;
   border: none;
-  padding: 0;
-  font-size: inherit;
+  padding: 8px 15px;
+  font-size: 0.9rem;
   cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
 }
 
 .logout-button:hover {
   color: var(--highlight-color);
+  background: rgba(255, 165, 0, 0.1);
 }
 
 /* Showcase section */
 #showcase {
   min-height: 100vh;
   background: linear-gradient(45deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7)),
-      url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80");
+    url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80");
   background-size: cover;
   background-position: center;
   text-align: center;
@@ -367,8 +411,8 @@ nav ul li a:hover {
 
 .pricing-plan:hover {
   transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(255, 165, 0, 0.15);
-    border-color: rgba(255, 165, 0, 0.3);
+  box-shadow: 0 20px 40px rgba(255, 165, 0, 0.15);
+  border-color: rgba(255, 165, 0, 0.3);
 }
 
 .price {
@@ -442,26 +486,6 @@ footer {
   background: var(--header-bg);
   backdrop-filter: blur(10px);
   border-top: 2px solid var(--border-color);
-}
-
-/* Dashboard button */
-.dashboard-button {
-  display: none; /* Hidden by default */
-  padding: 10px 20px;
-  background: var(--button-gradient);
-  color: #ffffff;
-  text-decoration: none;
-  border-radius: 5px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-}
-
-.dashboard-button:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--button-hover-shadow);
 }
 
 /* Custom mouse pointer - only show on desktop */
