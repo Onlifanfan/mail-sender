@@ -252,38 +252,34 @@ document.addEventListener("DOMContentLoaded", () => {
       line.style.transform = "scaleX(1)"
     })
   })
-  const themeToggle = document.getElementById("theme-toggle")
-  const themeStylesheet = document.getElementById("theme-stylesheet")
-  const body = document.body
+    const themeToggle = document.getElementById("theme-toggle")
+    const themeStylesheet = document.getElementById("theme-stylesheet")
+    const body = document.body
 
-  const themes = ["styles/light/loginl.css", "styles/dark/login.css"]
-  let currentThemeIndex = 0
+    const themes = ["light", "dark"]
+    let currentThemeIndex = 0
 
-  // Function to set the theme
-  function setTheme(theme) {
-    themeStylesheet.setAttribute("href", theme)
-    localStorage.setItem("theme", theme) // Save the theme to localStorage
-  }
-
-  // Get the stored theme from localStorage
-  const storedTheme = localStorage.getItem("theme")
-
-  if (storedTheme) {
-    setTheme(storedTheme)
-    currentThemeIndex = themes.indexOf(storedTheme)
-    if (currentThemeIndex === -1) {
-      currentThemeIndex = 0 // Reset to default if stored theme is invalid
-      setTheme(themes[0])
+    // Function to set the theme
+    function setTheme(theme) {
+        themeStylesheet.setAttribute("href", `styles/${theme}/login.css`)
+        localStorage.setItem("theme", theme) // Save only "light" or "dark" to localStorage
     }
-  } else {
-    // If no theme is stored, set the initial theme based on system preference
-    if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      currentThemeIndex = 1
+
+    // Get the stored theme from localStorage
+    const storedTheme = localStorage.getItem("theme")
+
+    if (storedTheme && themes.includes(storedTheme)) {
+        setTheme(storedTheme)
+        currentThemeIndex = themes.indexOf(storedTheme)
     } else {
-      currentThemeIndex = 0
+        // If no theme is stored or it's invalid, set the initial theme based on system preference
+        if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            currentThemeIndex = 1
+        } else {
+            currentThemeIndex = 0
+        }
+        setTheme(themes[currentThemeIndex])
     }
-    setTheme(themes[currentThemeIndex])
-  }
 
   // Toggle the theme
   themeToggle.addEventListener("click", () => {
