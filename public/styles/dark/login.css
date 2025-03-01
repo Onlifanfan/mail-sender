@@ -28,6 +28,24 @@ body {
   position: relative;
 }
 
+
+.logo {
+    font-size: 2rem;
+    color: #ffa500;
+    font-weight: bold;
+    margin-bottom: 2.5rem;
+    cursor:none;
+}
+
+    .logo a {
+        font-weight: bold;
+        color: #ffa500;
+        text-decoration: none;
+        display: block;
+        cursor: none;
+    }
+
+
 .form-container {
   width: 50%;
   max-width: 400px;
@@ -82,7 +100,7 @@ h2 {
   font-size: 2.5rem;
   margin-bottom: 2rem;
   text-align: center;
-  color: #ffa500;
+  color: white;
   text-transform: uppercase;
   letter-spacing: 2px;
   position: relative;
@@ -138,22 +156,22 @@ input:valid ~ .line {
   transform: scaleX(1);
 }
 #theme-toggle {
-  position: absolute;
-  top: 10px; /* Push to the bottom */
-  right: 10px; /* Align to the right */
-  background: rgba(255, 165, 0, 0.1); /* transparent orangered */
-  color: #ffa500; /* text color */
-  border-radius: 50%; /* Make it circular */
-  border: none;
-  width: 40px; /* Size of the button */
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2em; /* Size of the icon/text */
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  outline: none; /* Remove the outline */
+    position: absolute;
+    top: 10px; /* Push to the bottom */
+    right: 10px; /* Align to the right */
+    background: rgba(255, 165, 0, 0.1); /* transparent orangered */
+    color: #ffa500; /* text color */
+    border-radius: 50%; /* Make it circular */
+    border: none;
+    width: 40px; /* Size of the button */
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em; /* Size of the icon/text */
+    cursor: none;
+    transition: background-color 0.3s ease;
+    outline: none; /* Remove the outline */
 }
 
 #theme-toggle:hover {
