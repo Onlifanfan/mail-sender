@@ -98,55 +98,53 @@ document.addEventListener("DOMContentLoaded", () => {
     checkLoginStatus()
   }
 
-  // Theme toggle
-  const themeToggle = document.getElementById("theme-toggle")
-  const themeToggleMobile = document.getElementById("theme-toggle-mobile")
-  const themeStylesheet = document.getElementById("theme-stylesheet")
+    // Theme toggle
+    const themeToggle = document.getElementById("theme-toggle")
+    const themeToggleMobile = document.getElementById("theme-toggle-mobile")
+    const themeStylesheet = document.getElementById("theme-stylesheet")
 
-  if ((themeToggle || themeToggleMobile) && themeStylesheet) {
-    const themes = ["/styles/light/landing.css", "/styles/dark/landing.css"]
-    let currentThemeIndex = 0
+    if ((themeToggle || themeToggleMobile) && themeStylesheet) {
+        const themes = ["light", "dark"]
+        let currentThemeIndex = 0
 
-    // Function to set the theme
-    function setTheme(theme) {
-      themeStylesheet.setAttribute("href", theme)
-      localStorage.setItem("theme", theme) // Save the theme to localStorage
+        // Function to set the theme
+        function setTheme(theme) {
+            themeStylesheet.setAttribute("href", `/styles/${theme}/landing.css`)
+            localStorage.setItem("theme", theme) // Save only "light" or "dark" to localStorage
+            console.log("Stored theme:", theme)
+        }
+
+        // Get the stored theme from localStorage
+        const storedTheme = localStorage.getItem("theme")
+
+        if (storedTheme && themes.includes(storedTheme)) {
+            setTheme(storedTheme)
+            currentThemeIndex = themes.indexOf(storedTheme)
+        } else {
+            // If no theme is stored or invalid, set the initial theme based on system preference
+            if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                currentThemeIndex = 1
+            } else {
+                currentThemeIndex = 0
+            }
+            setTheme(themes[currentThemeIndex])
+        }
+
+        // Toggle the theme function
+        function toggleTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length
+            setTheme(themes[currentThemeIndex])
+        }
+
+        // Add event listeners to both theme toggle buttons
+        if (themeToggle) {
+            themeToggle.addEventListener("click", toggleTheme)
+        }
+        if (themeToggleMobile) {
+            themeToggleMobile.addEventListener("click", toggleTheme)
+        }
     }
 
-    // Get the stored theme from localStorage
-    const storedTheme = localStorage.getItem("theme")
-
-    if (storedTheme) {
-      setTheme(storedTheme)
-      currentThemeIndex = themes.indexOf(storedTheme)
-      if (currentThemeIndex === -1) {
-        currentThemeIndex = 0 // Reset to default if stored theme is invalid
-        setTheme(themes[0])
-      }
-    } else {
-      // If no theme is stored, set the initial theme based on system preference
-      if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        currentThemeIndex = 1
-      } else {
-        currentThemeIndex = 0
-      }
-      setTheme(themes[currentThemeIndex])
-    }
-
-    // Toggle the theme function
-    function toggleTheme() {
-      currentThemeIndex = (currentThemeIndex + 1) % themes.length
-      setTheme(themes[currentThemeIndex])
-    }
-
-    // Add event listeners to both theme toggle buttons
-    if (themeToggle) {
-      themeToggle.addEventListener("click", toggleTheme)
-    }
-    if (themeToggleMobile) {
-      themeToggleMobile.addEventListener("click", toggleTheme)
-    }
-  }
 
   // Logout functionality
   const logoutLink = document.getElementById("logout-link")
