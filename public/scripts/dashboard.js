@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Constants ---
     const emailsPerPage = 10;
-    const themes = ['styles/light/dashboard.css', 'styles/dark/dashboard.css'];
+    const themes = ["light", "dark"];
 
     // Hide default mouse cursor
     document.body.style.cursor = 'none';
@@ -43,20 +43,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- Theme Handling ---
     function setTheme(theme) {
-        themeStylesheet.setAttribute('href', theme);
+        themeStylesheet.setAttribute('href', `/styles/${theme}/dashboard.css`);
         localStorage.setItem('theme', theme);
     }
 
     function initializeTheme() {
         const storedTheme = localStorage.getItem('theme');
 
-        if (storedTheme) {
+        if (storedTheme && themes.includes(storedTheme)) {
             setTheme(storedTheme);
             currentThemeIndex = themes.indexOf(storedTheme);
-            if (currentThemeIndex === -1) {
-                currentThemeIndex = 0;
-                setTheme(themes[0]);
-            }
         } else {
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 currentThemeIndex = 1;
