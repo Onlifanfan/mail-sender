@@ -48,6 +48,13 @@ body {
     font-weight: bold;
     margin-bottom: 2.5rem;
 }
+    .logo a {
+        font-weight: bold;
+        color: var(--primary-color);
+        text-decoration: none;
+        display: block;
+        padding: 10px;
+    }
 
 .sidebar ul {
     list-style: none;
